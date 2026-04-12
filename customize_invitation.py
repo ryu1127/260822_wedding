@@ -84,9 +84,9 @@ def generate_invitation_html(data, output_path="index.html"):
         
         :root {
             --bg-color: #fefcf3;
-            --text-color: #333333;
+            --text-color: #000000;
             --accent-color: #bd7d1e;
-            --gray-text: #888888;
+            --gray-text: #666666;
             --white: #ffffff;
         }
 
@@ -109,14 +109,16 @@ def generate_invitation_html(data, output_path="index.html"):
             z-index: 10;
         }
 
-        .names { font-size: 24px; margin-bottom: 10px; color: var(--accent-color); }
+        .names { font-size: 24px; margin-bottom: 10px; color: var(--accent-color); font-weight: bold; }
         .date-info { font-size: 16px; color: var(--gray-text); margin-bottom: 30px; }
 
-        /* Parents Info Style */
-        .family-info { margin: 20px 0; font-size: 16px; line-height: 1.8; }
-        .family-row { display: flex; align-items: center; justify-content: center; gap: 10px; margin-bottom: 10px; }
-        .family-relation { color: #888; font-size: 14px; }
-        .family-name { font-weight: bold; min-width: 60px; }
+        /* Parents Info Section (Side by Side) */
+        .family-section { display: flex; justify-content: space-around; align-items: flex-start; margin: 30px 0; border-top: 1px solid #eee; border-bottom: 1px solid #eee; padding: 30px 0; }
+        .family-side { flex: 1; text-align: center; }
+        .family-side:first-child { border-right: 1px solid #eee; }
+        .family-parents { font-size: 16px; margin-bottom: 8px; line-height: 1.6; }
+        .family-relation { font-size: 13px; color: #888; margin-bottom: 5px; }
+        .family-child { font-size: 18px; font-weight: bold; color: var(--accent-color); }
 
         .swiper-gallery { width: 100%; height: 480px; margin: 20px 0; }
         .swiper-slide-gallery { display: grid; grid-template-columns: repeat(2, 1fr); grid-template-rows: repeat(2, 1fr); gap: 10px; padding: 10px; box-sizing: border-box; }
@@ -140,8 +142,11 @@ def generate_invitation_html(data, output_path="index.html"):
         .share-btn { background: var(--accent-color); color: #fff; font-weight: bold; width: 100%; margin-top: 10px; height: 45px; font-size: 14px; border-radius: 8px; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; }
         .flower-btn { background: var(--white); color: #333; border: 1px solid #ddd; width: 100%; margin-top: 10px; height: 45px; font-size: 14px; border-radius: 8px; cursor: pointer; text-decoration: none; display: flex; align-items: center; justify-content: center; gap: 8px; }
 
-        /* Naver Map Live View */
-        .map-wrapper { width: 100%; height: 300px; margin: 20px 0; border-radius: 8px; overflow: hidden; border: 1px solid #eee; }
+        /* Naver Map Style */
+        .map-container { width: 100%; height: auto; margin: 20px 0; border-radius: 8px; overflow: hidden; border: 1px solid #eee; cursor: pointer; position: relative; }
+        .map-container img { width: 100%; display: block; }
+        .map-overlay-btn { position: absolute; bottom: 15px; left: 50%; transform: translateX(-50%); background: #03c75a; color: #fff; padding: 8px 15px; border-radius: 4px; font-size: 12px; font-weight: bold; box-shadow: 0 2px 10px rgba(0,0,0,0.2); }
+
         .map-btn-group { display: flex; gap: 8px; justify-content: center; margin-top: 10px; flex-wrap: wrap; }
         .map-btn { padding: 10px 12px; background: var(--accent-color); color: #fff; text-decoration: none; border-radius: 20px; font-size: 12px; min-width: 80px; text-align: center; }
         .kakao-btn { background: #fee500; color: #3c1e1e; }
@@ -149,7 +154,7 @@ def generate_invitation_html(data, output_path="index.html"):
         
         .transport-item { text-align: left; margin-bottom: 25px; padding-left: 10px; border-left: 2px solid var(--accent-color); }
         .transport-title { font-weight: bold; color: var(--accent-color); font-size: 15px; margin-bottom: 5px; }
-        .transport-desc { font-size: 14px; color: #666; line-height: 1.6; }
+        .transport-desc { font-size: 14px; color: #444; line-height: 1.6; }
         .footer { padding: 40px; text-align: center; font-size: 12px; color: #aaa; background: #fafafa; }
     </style>
 </head>
@@ -161,20 +166,23 @@ def generate_invitation_html(data, output_path="index.html"):
         </div>
         
         <div class="section reveal">
-            <div class="family-info">
-                <div class="family-row">
-                    <span class="family-name">{{groom_father}}</span> · <span class="family-name">{{groom_mother}}</span>
-                    <span class="family-relation">의 아들</span>
-                    <span class="family-name" style="color: var(--accent-color);">{{groom_name}}</span>
+            <div class="names">{{groom_name}} & {{bride_name}}</div>
+            <div class="date-info">2026. 08. 22 토요일 12:30</div>
+            
+            <div class="family-section">
+                <div class="family-side">
+                    <div class="family-parents">{{groom_father}}<br>{{groom_mother}}</div>
+                    <div class="family-relation">의 아들</div>
+                    <div class="family-child">{{groom_name}}</div>
                 </div>
-                <div class="family-row">
-                    <span class="family-name">{{bride_father}}</span> · <span class="family-name">{{bride_mother}}</span>
-                    <span class="family-relation">의 딸</span>
-                    <span class="family-name" style="color: var(--accent-color);">{{bride_name}}</span>
+                <div class="family-side">
+                    <div class="family-parents">{{bride_father}}<br>{{bride_mother}}</div>
+                    <div class="family-relation">의 딸</div>
+                    <div class="family-child">{{bride_name}}</div>
                 </div>
             </div>
-            <div class="date-info">2026. 08. 22 토요일 12:30</div>
-            <div>노블발렌티 <span style="font-weight:bold;">대치점</span> {{hall_detail}}</div>
+            
+            <div style="margin-top: 20px; font-size: 15px;">노블발렌티 <span style="font-weight:bold;">대치점</span> {{hall_detail}}</div>
         </div>
 
         <div class="section greeting reveal">
@@ -195,11 +203,12 @@ def generate_invitation_html(data, output_path="index.html"):
             <h2 style="color: var(--accent-color); font-weight: normal; letter-spacing: 2px;">오시는 길</h2>
             <p style="margin-bottom: 5px;"><strong>노블발렌티 <span style="font-weight:bold;">대치점</span> {{hall_detail}}</strong></p>
             <p class="note-subtitle">*삼성점이 아니오니 유의 부탁드립니다.</p>
-            <p style="font-size: 14px; color: #888;">{{address}}</p>
+            <p style="font-size: 14px; color: #444;">{{address}}</p>
             
-            <!-- Real Naver Map View -->
-            <div class="map-wrapper">
-                <iframe src="https://map.naver.com/v5/search/%EB%85%B8%EB%B8%94%EB%B0%9C%EB%A0%8C%ED%8B%B0%20%EB%8C%80%EC%B9%98?is_sharing=true" width="100%" height="100%" style="border:0;" allowfullscreen="" loading="lazy"></iframe>
+            <!-- Real Naver Map View (Direct Image for Mobile Reliability) -->
+            <div class="map-container" onclick="window.open('https://map.naver.com/v5/search/%EB%85%B8%EB%B8%94%EB%B0%9C%EB%A0%8C%ED%8B%B0%20%EB%8C%80%EC%B9%98', '_blank')">
+                <img src="https://cdn.imweb.me/thumbnail/20251224/804939816d76a.jpg" alt="Map View">
+                <div class="map-overlay-btn">네이버 지도 바로가기</div>
             </div>
 
             <div class="map-btn-group">
@@ -302,7 +311,7 @@ def generate_invitation_html(data, output_path="index.html"):
 """
     account_html = ""
     for acc in data['accounts']:
-        account_html += f"""<div class="account-item"><strong>{acc['owner']}</strong><div class="account-info"><small style="color:#666;">{acc['bank']} {acc['number']}</small><div class="btn-group"><a href="tel:{acc['phone']}" class="small-btn phone-btn">📞</a><button class="small-btn" onclick="copyToClipboard('{acc['number'].replace("-", "")}')">복사</button></div></div></div>"""
+        account_html += f"""<div class="account-item"><strong>{acc['owner']}</strong><div class="account-info"><small style="color:#444;">{acc['bank']} {acc['number']}</small><div class="btn-group"><a href="tel:{acc['phone']}" class="small-btn phone-btn">📞</a><button class="small-btn" onclick="copyToClipboard('{acc['number'].replace("-", "")}')">복사</button></div></div></div>"""
 
     html_content = template_text
     html_content = html_content.replace("{{groom_name}}", data['groom']['name']).replace("{{bride_name}}", data['bride']['name'])
@@ -317,7 +326,7 @@ def generate_invitation_html(data, output_path="index.html"):
 
     with open(output_path, "w", encoding="utf-8") as f:
         f.write(html_content)
-    print(f"Refined invitation with parents info and interactive map generated at: {os.path.abspath(output_path)}")
+    print(f"Refined invitation updated and generated at: {os.path.abspath(output_path)}")
 
 if __name__ == "__main__":
     generate_invitation_html(MY_DATA)

@@ -5,10 +5,7 @@ import shutil
 from PIL import Image
 
 # 1. Configuration
-# 원본 사진 폴더 경로
 SOURCE_PHOTO_FOLDER = "/Users/dongheonryu/Downloads/0302/최종보정본"
-
-# 프로젝트 내부 폴더 설정 (GitHub 업로드용)
 IMAGES_DIR = "images"
 THUMBNAILS_DIR = "thumbnails"
 
@@ -21,26 +18,32 @@ for d in [IMAGES_DIR, THUMBNAILS_DIR]:
 all_source_photos = sorted(glob.glob(os.path.join(SOURCE_PHOTO_FOLDER, "*.jpg")))
 
 photo_data = []
-print("Preparing photos and thumbnails for GitHub...")
+print("Optimizing photos for web and mobile...")
+
+MAX_FULL_SIZE = (2000, 2000)  # 원본 이미지 최대 크기 (모바일/웹 최적화)
+THUMB_SIZE = (400, 400)       # 썸네일 크기
 
 for p in all_source_photos:
     filename = os.path.basename(p)
     dest_image_path = os.path.join(IMAGES_DIR, filename)
     thumb_path = os.path.join(THUMBNAILS_DIR, filename)
     
-    # 1. 원본 사진 복사 (폴더 내로 가져오기)
-    if not os.path.exists(dest_image_path):
-        shutil.copy2(p, dest_image_path)
-        print(f"Copied: {filename}")
+    # 1. 원본 이미지 최적화 (Resize & Compress)
+    # 이미 존재하더라도 용량이 너무 크면 다시 처리하도록 함 (1MB 이상일 경우)
+    if not os.path.exists(dest_image_path) or os.path.getsize(dest_image_path) > 1024 * 1024:
+        with Image.open(p) as img:
+            img.thumbnail(MAX_FULL_SIZE)
+            img.save(dest_image_path, "JPEG", quality=80, optimize=True)
+            print(f"Optimized Full: {filename}")
     
     # 2. 썸네일 생성
     if not os.path.exists(thumb_path):
         with Image.open(p) as img:
-            img.thumbnail((400, 400))
-            img.save(thumb_path, "JPEG", quality=85)
+            img.thumbnail(THUMB_SIZE)
+            img.save(thumb_path, "JPEG", quality=80)
             print(f"Thumbnail created: {filename}")
             
-    # 3. GitHub Pages용 상대 경로 저장
+    # 3. 상대 경로 저장
     photo_data.append({
         "full": f"images/{filename}",
         "thumb": f"thumbnails/{filename}"
@@ -95,8 +98,9 @@ def generate_invitation_html(data, output_path="index.html"):
         .swiper-slide-gallery img { width: 100%; height: 100%; object-fit: cover; border-radius: 4px; cursor: pointer; aspect-ratio: 1/1; }
         
         #lightbox { display: none; position: fixed; top:0; left:0; width:100%; height:100%; background: rgba(0,0,0,0.9); z-index: 1000; flex-direction: column; justify-content: center; align-items: center; }
-        .swiper-lightbox { width: 100%; height: 80%; }
-        .swiper-slide-lightbox img { max-width: 95%; max-height: 95%; border-radius: 8px; object-fit: contain; }
+        .swiper-lightbox { width: 100%; height: 100%; }
+        .swiper-slide-lightbox { display: flex; justify-content: center; align-items: center; }
+        .swiper-slide-lightbox img { max-width: 100%; max-height: 100%; object-fit: contain; }
         #lightbox .close { position: absolute; top: 20px; right: 20px; color: #fff; font-size: 40px; cursor: pointer; z-index: 1001; }
 
         .box-style { background: #f9f9f9; padding: 20px; border-radius: 8px; margin-top: 20px; text-align: left; border: 1px solid #eee; }
@@ -124,6 +128,9 @@ def generate_invitation_html(data, output_path="index.html"):
         .transport-title { font-weight: bold; color: #bd7d1e; font-size: 15px; margin-bottom: 5px; }
         .transport-desc { font-size: 14px; color: #666; line-height: 1.6; }
         .footer { padding: 40px; text-align: center; font-size: 12px; color: #aaa; background: #fafafa; }
+        
+        /* Swiper Lazy Preloader Color */
+        .swiper-lazy-preloader { --swiper-preloader-color: #bd7d1e; }
     </style>
 </head>
 <body>
@@ -216,16 +223,44 @@ def generate_invitation_html(data, output_path="index.html"):
             const slide = document.createElement('div');
             slide.className = 'swiper-slide swiper-slide-lightbox';
             const img = document.createElement('img');
-            img.src = photo.full;
+            // Swiper Lazy Loading
+            img.setAttribute('data-src', photo.full);
+            img.className = 'swiper-lazy';
+            
+            const preloader = document.createElement('div');
+            preloader.className = 'swiper-lazy-preloader';
+            
             slide.appendChild(img);
+            slide.appendChild(preloader);
             lightboxWrapper.appendChild(slide);
         });
 
-        const gallerySwiper = new Swiper('.swiper-gallery', { slidesPerView: 1, spaceBetween: 10, navigation: { nextEl: '.swiper-button-next', prevEl: '.swiper-button-prev' } });
-        const lightboxSwiper = new Swiper('.swiper-lightbox', { slidesPerView: 1, spaceBetween: 0, loop: true, navigation: { nextEl: '.swiper-button-next', prevEl: '.swiper-button-prev' } });
+        const gallerySwiper = new Swiper('.swiper-gallery', { 
+            slidesPerView: 1, 
+            spaceBetween: 10, 
+            navigation: { nextEl: '.swiper-button-next', prevEl: '.swiper-button-prev' } 
+        });
+        
+        const lightboxSwiper = new Swiper('.swiper-lightbox', { 
+            slidesPerView: 1, 
+            spaceBetween: 0, 
+            loop: true,
+            lazy: {
+                loadPrevNext: true,
+                loadPrevNextAmount: 2
+            },
+            navigation: { nextEl: '.swiper-button-next', prevEl: '.swiper-button-prev' } 
+        });
 
-        function openLightbox(idx) { document.getElementById('lightbox').style.display = 'flex'; lightboxSwiper.slideToLoop(idx, 0); document.body.style.overflow = 'hidden'; }
-        function closeLightbox() { document.getElementById('lightbox').style.display = 'none'; document.body.style.overflow = 'auto'; }
+        function openLightbox(idx) { 
+            document.getElementById('lightbox').style.display = 'flex'; 
+            lightboxSwiper.slideToLoop(idx, 0); 
+            document.body.style.overflow = 'hidden'; 
+        }
+        function closeLightbox() { 
+            document.getElementById('lightbox').style.display = 'none'; 
+            document.body.style.overflow = 'auto'; 
+        }
         function copyToClipboard(text) { navigator.clipboard.writeText(text).then(() => alert('계좌번호가 복사되었습니다.')); }
 
         let currentPage = 1; const pageSize = 5;
@@ -272,9 +307,8 @@ def generate_invitation_html(data, output_path="index.html"):
 
     with open(output_path, "w", encoding="utf-8") as f:
         f.write(html_content)
-    print(f"Deployment-ready invitation generated at: {os.path.abspath(output_path)}")
+    print(f"Optimized invitation generated at: {os.path.abspath(output_path)}")
 
 if __name__ == "__main__":
     generate_invitation_html(MY_DATA)
-    # Open the file
     os.system(f"open index.html")

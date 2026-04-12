@@ -21,8 +21,9 @@
         .swiper-slide-gallery img { width: 100%; height: 100%; object-fit: cover; border-radius: 4px; cursor: pointer; aspect-ratio: 1/1; }
         
         #lightbox { display: none; position: fixed; top:0; left:0; width:100%; height:100%; background: rgba(0,0,0,0.9); z-index: 1000; flex-direction: column; justify-content: center; align-items: center; }
-        .swiper-lightbox { width: 100%; height: 80%; }
-        .swiper-slide-lightbox img { max-width: 95%; max-height: 95%; border-radius: 8px; object-fit: contain; }
+        .swiper-lightbox { width: 100%; height: 100%; }
+        .swiper-slide-lightbox { display: flex; justify-content: center; align-items: center; }
+        .swiper-slide-lightbox img { max-width: 100%; max-height: 100%; object-fit: contain; }
         #lightbox .close { position: absolute; top: 20px; right: 20px; color: #fff; font-size: 40px; cursor: pointer; z-index: 1001; }
 
         .box-style { background: #f9f9f9; padding: 20px; border-radius: 8px; margin-top: 20px; text-align: left; border: 1px solid #eee; }
@@ -50,6 +51,9 @@
         .transport-title { font-weight: bold; color: #bd7d1e; font-size: 15px; margin-bottom: 5px; }
         .transport-desc { font-size: 14px; color: #666; line-height: 1.6; }
         .footer { padding: 40px; text-align: center; font-size: 12px; color: #aaa; background: #fafafa; }
+        
+        /* Swiper Lazy Preloader Color */
+        .swiper-lazy-preloader { --swiper-preloader-color: #bd7d1e; }
     </style>
 </head>
 <body>
@@ -147,16 +151,44 @@
             const slide = document.createElement('div');
             slide.className = 'swiper-slide swiper-slide-lightbox';
             const img = document.createElement('img');
-            img.src = photo.full;
+            // Swiper Lazy Loading
+            img.setAttribute('data-src', photo.full);
+            img.className = 'swiper-lazy';
+            
+            const preloader = document.createElement('div');
+            preloader.className = 'swiper-lazy-preloader';
+            
             slide.appendChild(img);
+            slide.appendChild(preloader);
             lightboxWrapper.appendChild(slide);
         });
 
-        const gallerySwiper = new Swiper('.swiper-gallery', { slidesPerView: 1, spaceBetween: 10, navigation: { nextEl: '.swiper-button-next', prevEl: '.swiper-button-prev' } });
-        const lightboxSwiper = new Swiper('.swiper-lightbox', { slidesPerView: 1, spaceBetween: 0, loop: true, navigation: { nextEl: '.swiper-button-next', prevEl: '.swiper-button-prev' } });
+        const gallerySwiper = new Swiper('.swiper-gallery', { 
+            slidesPerView: 1, 
+            spaceBetween: 10, 
+            navigation: { nextEl: '.swiper-button-next', prevEl: '.swiper-button-prev' } 
+        });
+        
+        const lightboxSwiper = new Swiper('.swiper-lightbox', { 
+            slidesPerView: 1, 
+            spaceBetween: 0, 
+            loop: true,
+            lazy: {
+                loadPrevNext: true,
+                loadPrevNextAmount: 2
+            },
+            navigation: { nextEl: '.swiper-button-next', prevEl: '.swiper-button-prev' } 
+        });
 
-        function openLightbox(idx) { document.getElementById('lightbox').style.display = 'flex'; lightboxSwiper.slideToLoop(idx, 0); document.body.style.overflow = 'hidden'; }
-        function closeLightbox() { document.getElementById('lightbox').style.display = 'none'; document.body.style.overflow = 'auto'; }
+        function openLightbox(idx) { 
+            document.getElementById('lightbox').style.display = 'flex'; 
+            lightboxSwiper.slideToLoop(idx, 0); 
+            document.body.style.overflow = 'hidden'; 
+        }
+        function closeLightbox() { 
+            document.getElementById('lightbox').style.display = 'none'; 
+            document.body.style.overflow = 'auto'; 
+        }
         function copyToClipboard(text) { navigator.clipboard.writeText(text).then(() => alert('계좌번호가 복사되었습니다.')); }
 
         let currentPage = 1; const pageSize = 5;

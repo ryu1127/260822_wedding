@@ -16,7 +16,7 @@ for d in [IMAGES_DIR, THUMBNAILS_DIR]:
 all_source_photos = sorted(glob.glob(os.path.join(SOURCE_PHOTO_FOLDER, "*.jpg")))
 
 photo_data = []
-print("Re-optimizing photos for better mobile compatibility...")
+print("Preparing optimized photos...")
 
 MAX_FULL_SIZE = (1200, 1200) 
 THUMB_SIZE = (400, 400)
@@ -26,9 +26,10 @@ for p in all_source_photos:
     dest_image_path = os.path.join(IMAGES_DIR, filename)
     thumb_path = os.path.join(THUMBNAILS_DIR, filename)
     
-    with Image.open(p) as img:
-        img.thumbnail(MAX_FULL_SIZE)
-        img.save(dest_image_path, "JPEG", quality=75, optimize=True)
+    if not os.path.exists(dest_image_path):
+        with Image.open(p) as img:
+            img.thumbnail(MAX_FULL_SIZE)
+            img.save(dest_image_path, "JPEG", quality=75, optimize=True)
         
     if not os.path.exists(thumb_path):
         with Image.open(p) as img:
@@ -71,11 +72,17 @@ def generate_invitation_html(data, output_path="index.html"):
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>{{groom_name}} ♥ {{bride_name}} 결혼합니다</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
+    <!-- Kakao SDK -->
+    <script src="https://t1.kakaocdn.net/kakao_js_sdk/2.7.0/kakao.min.js" integrity="sha384-l6S9p9NoAn7GnEALcaS7Ssh9vYpYpHshGRGwZf9f9ksNCfIzZ6XnxnVvIn2OnYka" crossorigin="anonymous"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Gowun+Batang&display=swap');
         body { font-family: 'Gowun Batang', serif; margin: 0; padding: 0; background-color: #fefcf3; color: #333; display: flex; justify-content: center; }
-        .container { max-width: 480px; width: 100%; background: #fff; box-shadow: 0 0 20px rgba(0,0,0,0.05); overflow-x: hidden; }
+        .container { max-width: 480px; width: 100%; background: #fff; box-shadow: 0 0 20px rgba(0,0,0,0.05); overflow-x: hidden; position: relative; }
         .section { padding: 60px 20px; text-align: center; border-bottom: 1px solid #f0f0f0; }
+        
+        /* D-Day Top Bar */
+        .d-day-top { background: #bd7d1e; color: #fff; padding: 10px; font-size: 14px; letter-spacing: 2px; position: sticky; top: 0; z-index: 100; }
+
         .main-photo img { width: 100%; display: block; }
         .names { font-size: 24px; margin-bottom: 10px; color: #bd7d1e; }
         .date-info { font-size: 16px; color: #888; margin-bottom: 30px; }
@@ -96,11 +103,22 @@ def generate_invitation_html(data, output_path="index.html"):
         .account-item:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
         .account-info { display: flex; justify-content: space-between; align-items: center; margin-top: 5px; }
         .btn-group { display: flex; gap: 5px; }
-        .small-btn { padding: 4px 8px; background: #bd7d1e; color: #fff; border: none; border-radius: 4px; font-size: 11px; cursor: pointer; text-decoration: none; display: inline-block; }
+        .small-btn { padding: 6px 12px; background: #bd7d1e; color: #fff; border: none; border-radius: 4px; font-size: 12px; cursor: pointer; text-decoration: none; display: inline-block; }
         .phone-btn { background: #5cb85c; }
+        .share-btn { background: #fee500; color: #3c1e1e; font-weight: bold; width: 100%; margin-top: 10px; height: 45px; font-size: 14px; border-radius: 8px; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; }
+        .flower-btn { background: #fff; color: #333; border: 1px solid #ddd; width: 100%; margin-top: 10px; height: 45px; font-size: 14px; border-radius: 8px; cursor: pointer; text-decoration: none; display: flex; align-items: center; justify-content: center; gap: 8px; }
 
-        /* Map Embed */
-        .map-container { width: 100%; height: 300px; margin: 20px 0; border-radius: 8px; overflow: hidden; border: 1px solid #eee; }
+        /* Naver Map Style Container */
+        .map-preview { 
+            width: 100%; height: 220px; background: #f0f0f0; border-radius: 8px; margin: 20px 0; 
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+            border: 1px solid #ddd; background-image: url('https://upload.wikimedia.org/wikipedia/commons/b/bc/Naver_Map_Logo.png');
+            background-size: 60px; background-repeat: no-repeat; background-position: center 60px;
+            position: relative; cursor: pointer;
+        }
+        .map-preview::after { content: "네이버 지도로 바로가기"; position: absolute; bottom: 60px; font-weight: bold; color: #03c75a; }
+        .map-preview-btn { position: absolute; bottom: 20px; background: #03c75a; color: #fff; padding: 8px 20px; border-radius: 4px; font-size: 13px; font-weight: bold; }
+
         .map-btn-group { display: flex; gap: 8px; justify-content: center; margin-top: 10px; flex-wrap: wrap; }
         .map-btn { padding: 10px 12px; background: #bd7d1e; color: #fff; text-decoration: none; border-radius: 20px; font-size: 12px; min-width: 80px; text-align: center; }
         .kakao-btn { background: #fee500; color: #3c1e1e; }
@@ -113,11 +131,12 @@ def generate_invitation_html(data, output_path="index.html"):
     </style>
 </head>
 <body>
+    <div class="d-day-top" id="d-day-display">LOADING...</div>
     <div class="container">
         <div class="main-photo"><img src="{{cover_photo}}" alt="Cover"></div>
         <div class="section">
             <div class="names">{{groom_name}} & {{bride_name}}</div>
-            <div class="date-info">{{wedding_date}} {{wedding_time}}</div>
+            <div class="date-info">2026. 08. 22 토요일 12:30</div>
             <div>노블발렌티 <span style="font-weight:bold;">대치점</span> {{hall_detail}}</div>
         </div>
 
@@ -141,9 +160,9 @@ def generate_invitation_html(data, output_path="index.html"):
             <p class="note-subtitle">*삼성점이 아니오니 유의 부탁드립니다.</p>
             <p style="font-size: 14px; color: #888;">{{address}}</p>
             
-            <!-- Embedded Google Map -->
-            <div class="map-container">
-                <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3165.140461243454!2d127.0632663763564!3d37.50330422701411!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x357ca44090900001%3A0x2f8f0f0f0f0f0f0f!2z64W467iU67Cc66CM7YisIOuMgOueygkA!5e0!3m2!1sko!2skr!4v1712920000000!5m2!1sko!2skr" width="100%" height="100%" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+            <!-- Naver Map Placeholder Link -->
+            <div class="map-preview" onclick="window.open('https://map.naver.com/v5/search/%EB%85%B8%EB%B8%94%EB%B0%9C%EB%A0%8C%ED%8B%B0%20%EB%8C%80%EC%B9%98', '_blank')">
+                <div class="map-preview-btn">네이버 지도 앱 열기</div>
             </div>
 
             <div class="map-btn-group">
@@ -161,6 +180,14 @@ def generate_invitation_html(data, output_path="index.html"):
         <div class="section">
             <h2 style="color: #bd7d1e;">마음 전하실 곳</h2>
             <div class="box-style">{{account_items_html}}</div>
+            
+            <a href="https://m.99flower.co.kr/" target="_blank" class="flower-btn">
+                🌸 축하 화환 보내기
+            </a>
+            
+            <button class="share-btn" onclick="shareKakao()">
+                💬 카카오톡으로 청첩장 공유하기
+            </button>
         </div>
 
         <div class="footer">© {{wedding_year}} {{groom_name}} & {{bride_name}}</div>
@@ -177,6 +204,20 @@ def generate_invitation_html(data, output_path="index.html"):
 
     <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
     <script>
+        // 1. D-Day Logic
+        const weddingDate = new Date("2026-08-22").getTime();
+        function updateDDay() {
+            const now = new Date().getTime();
+            const distance = weddingDate - now;
+            const days = Math.ceil(distance / (1000 * 60 * 60 * 24));
+            const display = document.getElementById('d-day-display');
+            if (days > 0) display.innerText = `2026. 08. 22 (D-${days})`;
+            else if (days === 0) display.innerText = `HAPPY WEDDING DAY (D-Day)`;
+            else display.innerText = `2026. 08. 22`;
+        }
+        updateDDay();
+
+        // 2. Photo Data
         const photoData = {{photo_data_json}};
         const galleryWrapper = document.getElementById('gallery-wrapper');
         const lightboxWrapper = document.getElementById('lightbox-wrapper');
@@ -208,7 +249,28 @@ def generate_invitation_html(data, output_path="index.html"):
 
         function openLightbox(idx) { document.getElementById('lightbox').style.display = 'flex'; lightboxSwiper.update(); lightboxSwiper.slideToLoop(idx, 0); document.body.style.overflow = 'hidden'; }
         function closeLightbox() { document.getElementById('lightbox').style.display = 'none'; document.body.style.overflow = 'auto'; }
+        
+        // 3. Utils
         function copyToClipboard(text) { navigator.clipboard.writeText(text).then(() => alert('계좌번호가 복사되었습니다.')); }
+
+        // 4. Kakao Share
+        Kakao.init('7e2f0606066060606060606060606060'); // API Key placeholder - JavaScript Key needed for full functionality
+        function shareKakao() {
+            if (!Kakao.isInitialized()) {
+                alert('카카오톡 공유 기능을 준비 중입니다. 링크를 직접 복사해 주세요.');
+                return;
+            }
+            Kakao.Share.sendDefault({
+                objectType: 'feed',
+                content: {
+                    title: '류동헌 ♥ 황혜신 결혼합니다',
+                    description: '2026. 08. 22 12:30 노블발렌티 대치점',
+                    imageUrl: window.location.origin + '/{{cover_photo}}',
+                    link: { mobileWebUrl: window.location.href, webUrl: window.location.href },
+                },
+                buttons: [{ title: '청첩장 보기', link: { mobileWebUrl: window.location.href, webUrl: window.location.href } }]
+            });
+        }
     </script>
 </body>
 </html>
@@ -231,7 +293,7 @@ def generate_invitation_html(data, output_path="index.html"):
     # Manual replacement
     html_content = template_text
     html_content = html_content.replace("{{groom_name}}", data['groom_name']).replace("{{bride_name}}", data['bride_name'])
-    html_content = html_content.replace("{{wedding_date}}", data['wedding_date']).replace("{{wedding_time}}", data['wedding_time'])
+    html_content = html_content.replace("{{wedding_date}}", data['wedding_date'])
     html_content = html_content.replace("{{hall_detail}}", data['hall_detail']).replace("{{address}}", data['address'])
     html_content = html_content.replace("{{greeting_title}}", data['greeting_title']).replace("{{greeting_message}}", data['greeting_message'])
     html_content = html_content.replace("{{cover_photo}}", cover_photo)
@@ -241,7 +303,7 @@ def generate_invitation_html(data, output_path="index.html"):
 
     with open(output_path, "w", encoding="utf-8") as f:
         f.write(html_content)
-    print(f"Final simplified invitation generated at: {os.path.abspath(output_path)}")
+    print(f"Final feature-rich invitation generated at: {os.path.abspath(output_path)}")
 
 if __name__ == "__main__":
     generate_invitation_html(MY_DATA)

@@ -1,0 +1,231 @@
+
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>류동헌 ♥ 황혜신 결혼합니다</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Gowun+Batang&display=swap');
+        body { font-family: 'Gowun Batang', serif; margin: 0; padding: 0; background-color: #fefcf3; color: #333; display: flex; justify-content: center; }
+        .container { max-width: 480px; width: 100%; background: #fff; box-shadow: 0 0 20px rgba(0,0,0,0.05); overflow-x: hidden; }
+        .section { padding: 60px 20px; text-align: center; border-bottom: 1px solid #f0f0f0; }
+        .main-photo img { width: 100%; display: block; }
+        .names { font-size: 24px; margin-bottom: 10px; color: #bd7d1e; }
+        .date-info { font-size: 16px; color: #888; margin-bottom: 30px; }
+        .note-subtitle { font-size: 13px; color: #999; margin-top: -10px; margin-bottom: 20px; }
+
+        /* Gallery Slider */
+        .swiper-gallery { width: 100%; height: 480px; margin: 20px 0; }
+        .swiper-slide-gallery { display: grid; grid-template-columns: repeat(2, 1fr); grid-template-rows: repeat(2, 1fr); gap: 10px; padding: 10px; box-sizing: border-box; }
+        .swiper-slide-gallery img { width: 100%; height: 100%; object-fit: cover; border-radius: 4px; cursor: pointer; aspect-ratio: 1/1; }
+        
+        /* Lightbox */
+        #lightbox { display: none; position: fixed; top:0; left:0; width:100%; height:100%; background: rgba(0,0,0,0.9); z-index: 1000; flex-direction: column; justify-content: center; align-items: center; }
+        .swiper-lightbox { width: 100%; height: 80%; }
+        .swiper-slide-lightbox img { max-width: 95%; max-height: 95%; border-radius: 8px; object-fit: contain; }
+        #lightbox .close { position: absolute; top: 20px; right: 20px; color: #fff; font-size: 40px; cursor: pointer; z-index: 1001; }
+
+        /* Account & Guestbook */
+        .box-style { background: #f9f9f9; padding: 20px; border-radius: 8px; margin-top: 20px; text-align: left; border: 1px solid #eee; }
+        .account-item { margin-bottom: 15px; border-bottom: 1px solid #eee; padding-bottom: 10px; display: flex; justify-content: space-between; align-items: center; }
+        .copy-btn { padding: 5px 10px; background: #bd7d1e; color: #fff; border: none; border-radius: 4px; font-size: 12px; cursor: pointer; }
+
+        .guestbook-input { width: 100%; margin-bottom: 10px; padding: 10px; border: 1px solid #ddd; border-radius: 4px; box-sizing: border-box; font-family: inherit; }
+        .guestbook-list { margin-top: 20px; text-align: left; }
+        .guestbook-item { padding: 12px; border-bottom: 1px solid #f0f0f0; background: #fff; margin-bottom: 8px; border-radius: 4px; }
+        .guestbook-name { font-weight: bold; font-size: 14px; color: #bd7d1e; margin-bottom: 4px; }
+        .guestbook-msg { font-size: 14px; color: #444; line-height: 1.4; }
+
+        /* Pagination */
+        .pagination { display: flex; justify-content: center; align-items: center; gap: 15px; margin-top: 20px; }
+        .page-btn { padding: 5px 12px; border: 1px solid #bd7d1e; background: #fff; color: #bd7d1e; border-radius: 4px; cursor: pointer; font-size: 13px; }
+        .page-btn:disabled { border-color: #ddd; color: #ccc; cursor: default; }
+        .page-info { font-size: 13px; color: #666; }
+
+        /* Venue */
+        .map-wrapper { margin: 20px 0; border: 1px solid #eee; border-radius: 8px; overflow: hidden; }
+        .map-wrapper img { width: 100%; display: block; }
+        .map-btn-group { display: flex; gap: 10px; justify-content: center; margin-top: 10px; }
+        .map-btn { padding: 10px 15px; background: #bd7d1e; color: #fff; text-decoration: none; border-radius: 20px; font-size: 13px; }
+        .kakao-btn { background: #fee500; color: #3c1e1e; }
+        
+        .transport-item { text-align: left; margin-bottom: 25px; padding-left: 10px; border-left: 2px solid #f3d090; }
+        .transport-title { font-weight: bold; color: #bd7d1e; font-size: 15px; margin-bottom: 5px; }
+        .transport-desc { font-size: 14px; color: #666; line-height: 1.6; }
+        .footer { padding: 40px; text-align: center; font-size: 12px; color: #aaa; background: #fafafa; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="main-photo"><img src="file:///Users/dongheonryu/Downloads/0302/최종보정본/7M400005.jpg" alt="Cover"></div>
+        <div class="section">
+            <div class="names">류동헌 & 황혜신</div>
+            <div class="date-info">2026-08-22 12:30</div>
+            <div>노블발렌티 <span style="font-weight:bold;">대치점</span> B1 단독홀</div>
+        </div>
+
+        <div class="section greeting">
+            <h2 style="color: #bd7d1e;">우리, 결혼합니다</h2>
+            <p style="line-height: 2; white-space: pre-wrap;">저희 두사람의 작은 만남이
+사랑의 결실을 이루어
+결혼식을 올리게 되었습니다.
+
+평생 서로를 귀하게 여기며 첫 마음
+그대로 존중하고 배려하며 살겠습니다.</p>
+        </div>
+
+        <div class="section" style="padding: 60px 0;">
+            <h2 style="color: #bd7d1e;">Wedding Gallery</h2>
+            <div class="swiper swiper-gallery">
+                <div class="swiper-wrapper" id="gallery-wrapper"></div>
+                <div class="swiper-button-next" style="color: #bd7d1e;"></div>
+                <div class="swiper-button-prev" style="color: #bd7d1e;"></div>
+            </div>
+        </div>
+
+        <div class="section venue">
+            <h2 style="color: #bd7d1e;">오시는 길</h2>
+            <p style="margin-bottom: 5px;"><strong>노블발렌티 <span style="font-weight:bold;">대치점</span> B1 단독홀</strong></p>
+            <p class="note-subtitle">*삼성점이 아니오니 유의 부탁드립니다.</p>
+            <p style="font-size: 14px; color: #888;">서울특별시 강남구 영동대로 325 (S-Tower 지하 1층)</p>
+            <div class="map-wrapper"><img src="https://cdn.imweb.me/thumbnail/20251224/804939816d76a.jpg" alt="Map"></div>
+            <div class="map-btn-group">
+                <a href="https://map.naver.com/v5/search/%EB%85%B8%EB%B8%94%EB%B0%9C%EB%A0%8C%ED%8B%B0%20%EB%8C%80%EC%B9%98" target="_blank" class="map-btn">네이버 지도</a>
+                <a href="https://map.kakao.com/link/search/%EB%85%B8%EB%B8%94%EB%B0%9C%EB%A0%8C%ED%8B%B0%20%EB%8C%80%EC%B9%98%EC%A0%90" target="_blank" class="map-btn kakao-btn">카카오 맵</a>
+            </div>
+            <div style="margin-top: 40px;">
+                <div class="transport-item"><div class="transport-title">지하철 및 셔틀버스</div><div class="transport-desc">2호선 삼성역 3번 출구 (셔틀버스 수시 운행)<br>3호선 학여울역 1번 출구 (도보 10분)</div></div>
+                <div class="transport-item"><div class="transport-title">버스</div><div class="transport-desc">휘문고교 사거리 정류장 하차<br>간선: 343, 401 / 지선: 4319 / 마을: 강남01, 강남06</div></div>
+                <div class="transport-item"><div class="transport-title">주차 안내</div><div class="transport-desc">S-Tower 건물 내 지하 주차장 (하객 2시간 무료)</div></div>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2 style="color: #bd7d1e;">마음 전하실 곳</h2>
+            <div class="box-style"><div class="account-item"><div><strong>신랑 류동헌</strong><br><small style="color:#666;">토스뱅크 1000-1013-9845</small></div><button class="copy-btn" onclick="copyToClipboard('100010139845')">복사</button></div><div class="account-item"><div><strong>신부 황혜신</strong><br><small style="color:#666;">토스뱅크 1000-2458-9041</small></div><button class="copy-btn" onclick="copyToClipboard('100024589041')">복사</button></div></div>
+        </div>
+
+        <div class="section">
+            <h2 style="color: #bd7d1e;">방명록</h2>
+            <div class="box-style">
+                <input type="text" id="gb-name" class="guestbook-input" placeholder="성함을 입력해주세요">
+                <textarea id="gb-msg" class="guestbook-input" placeholder="축하 메시지를 남겨주세요" rows="3"></textarea>
+                <button class="copy-btn" style="width: 100%; height: 40px; font-size: 14px;" onclick="addGuestbook()">메시지 남기기</button>
+                <div id="gb-list" class="guestbook-list"></div>
+                <div class="pagination" id="pagination"></div>
+            </div>
+        </div>
+
+        <div class="footer">© 2026 류동헌 & 황혜신</div>
+    </div>
+
+    <div id="lightbox">
+        <span class="close" onclick="closeLightbox()">&times;</span>
+        <div class="swiper swiper-lightbox">
+            <div class="swiper-wrapper" id="lightbox-wrapper"></div>
+            <div class="swiper-button-next" style="color: #fff;"></div>
+            <div class="swiper-button-prev" style="color: #fff;"></div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+    <script>
+        const photoData = [{"full": "file:///Users/dongheonryu/Downloads/0302/\ucd5c\uc885\ubcf4\uc815\ubcf8/7M400005.jpg", "thumb": "file:///Users/dongheonryu/Desktop/AI_Project/gemini_test/thumbnails/7M400005.jpg"}, {"full": "file:///Users/dongheonryu/Downloads/0302/\ucd5c\uc885\ubcf4\uc815\ubcf8/7M400038.jpg", "thumb": "file:///Users/dongheonryu/Desktop/AI_Project/gemini_test/thumbnails/7M400038.jpg"}, {"full": "file:///Users/dongheonryu/Downloads/0302/\ucd5c\uc885\ubcf4\uc815\ubcf8/7M400089.jpg", "thumb": "file:///Users/dongheonryu/Desktop/AI_Project/gemini_test/thumbnails/7M400089.jpg"}, {"full": "file:///Users/dongheonryu/Downloads/0302/\ucd5c\uc885\ubcf4\uc815\ubcf8/7M400180.jpg", "thumb": "file:///Users/dongheonryu/Desktop/AI_Project/gemini_test/thumbnails/7M400180.jpg"}, {"full": "file:///Users/dongheonryu/Downloads/0302/\ucd5c\uc885\ubcf4\uc815\ubcf8/7M400201.jpg", "thumb": "file:///Users/dongheonryu/Desktop/AI_Project/gemini_test/thumbnails/7M400201.jpg"}, {"full": "file:///Users/dongheonryu/Downloads/0302/\ucd5c\uc885\ubcf4\uc815\ubcf8/7M400215.jpg", "thumb": "file:///Users/dongheonryu/Desktop/AI_Project/gemini_test/thumbnails/7M400215.jpg"}, {"full": "file:///Users/dongheonryu/Downloads/0302/\ucd5c\uc885\ubcf4\uc815\ubcf8/7M400252.jpg", "thumb": "file:///Users/dongheonryu/Desktop/AI_Project/gemini_test/thumbnails/7M400252.jpg"}, {"full": "file:///Users/dongheonryu/Downloads/0302/\ucd5c\uc885\ubcf4\uc815\ubcf8/7M400269.jpg", "thumb": "file:///Users/dongheonryu/Desktop/AI_Project/gemini_test/thumbnails/7M400269.jpg"}, {"full": "file:///Users/dongheonryu/Downloads/0302/\ucd5c\uc885\ubcf4\uc815\ubcf8/7M400291.jpg", "thumb": "file:///Users/dongheonryu/Desktop/AI_Project/gemini_test/thumbnails/7M400291.jpg"}, {"full": "file:///Users/dongheonryu/Downloads/0302/\ucd5c\uc885\ubcf4\uc815\ubcf8/7M400341.jpg", "thumb": "file:///Users/dongheonryu/Desktop/AI_Project/gemini_test/thumbnails/7M400341.jpg"}, {"full": "file:///Users/dongheonryu/Downloads/0302/\ucd5c\uc885\ubcf4\uc815\ubcf8/7M400344.jpg", "thumb": "file:///Users/dongheonryu/Desktop/AI_Project/gemini_test/thumbnails/7M400344.jpg"}, {"full": "file:///Users/dongheonryu/Downloads/0302/\ucd5c\uc885\ubcf4\uc815\ubcf8/7M400367.jpg", "thumb": "file:///Users/dongheonryu/Desktop/AI_Project/gemini_test/thumbnails/7M400367.jpg"}, {"full": "file:///Users/dongheonryu/Downloads/0302/\ucd5c\uc885\ubcf4\uc815\ubcf8/7M400415.jpg", "thumb": "file:///Users/dongheonryu/Desktop/AI_Project/gemini_test/thumbnails/7M400415.jpg"}, {"full": "file:///Users/dongheonryu/Downloads/0302/\ucd5c\uc885\ubcf4\uc815\ubcf8/7M400461.jpg", "thumb": "file:///Users/dongheonryu/Desktop/AI_Project/gemini_test/thumbnails/7M400461.jpg"}, {"full": "file:///Users/dongheonryu/Downloads/0302/\ucd5c\uc885\ubcf4\uc815\ubcf8/7M400471.jpg", "thumb": "file:///Users/dongheonryu/Desktop/AI_Project/gemini_test/thumbnails/7M400471.jpg"}, {"full": "file:///Users/dongheonryu/Downloads/0302/\ucd5c\uc885\ubcf4\uc815\ubcf8/7M400507.jpg", "thumb": "file:///Users/dongheonryu/Desktop/AI_Project/gemini_test/thumbnails/7M400507.jpg"}, {"full": "file:///Users/dongheonryu/Downloads/0302/\ucd5c\uc885\ubcf4\uc815\ubcf8/7M400552.jpg", "thumb": "file:///Users/dongheonryu/Desktop/AI_Project/gemini_test/thumbnails/7M400552.jpg"}, {"full": "file:///Users/dongheonryu/Downloads/0302/\ucd5c\uc885\ubcf4\uc815\ubcf8/7M400571.jpg", "thumb": "file:///Users/dongheonryu/Desktop/AI_Project/gemini_test/thumbnails/7M400571.jpg"}, {"full": "file:///Users/dongheonryu/Downloads/0302/\ucd5c\uc885\ubcf4\uc815\ubcf8/7R300095.jpg", "thumb": "file:///Users/dongheonryu/Desktop/AI_Project/gemini_test/thumbnails/7R300095.jpg"}, {"full": "file:///Users/dongheonryu/Downloads/0302/\ucd5c\uc885\ubcf4\uc815\ubcf8/7R300099.jpg", "thumb": "file:///Users/dongheonryu/Desktop/AI_Project/gemini_test/thumbnails/7R300099.jpg"}, {"full": "file:///Users/dongheonryu/Downloads/0302/\ucd5c\uc885\ubcf4\uc815\ubcf8/7R300198.jpg", "thumb": "file:///Users/dongheonryu/Desktop/AI_Project/gemini_test/thumbnails/7R300198.jpg"}, {"full": "file:///Users/dongheonryu/Downloads/0302/\ucd5c\uc885\ubcf4\uc815\ubcf8/7R300235.jpg", "thumb": "file:///Users/dongheonryu/Desktop/AI_Project/gemini_test/thumbnails/7R300235.jpg"}, {"full": "file:///Users/dongheonryu/Downloads/0302/\ucd5c\uc885\ubcf4\uc815\ubcf8/7R300288.jpg", "thumb": "file:///Users/dongheonryu/Desktop/AI_Project/gemini_test/thumbnails/7R300288.jpg"}, {"full": "file:///Users/dongheonryu/Downloads/0302/\ucd5c\uc885\ubcf4\uc815\ubcf8/7R300290.jpg", "thumb": "file:///Users/dongheonryu/Desktop/AI_Project/gemini_test/thumbnails/7R300290.jpg"}, {"full": "file:///Users/dongheonryu/Downloads/0302/\ucd5c\uc885\ubcf4\uc815\ubcf8/7R300296.jpg", "thumb": "file:///Users/dongheonryu/Desktop/AI_Project/gemini_test/thumbnails/7R300296.jpg"}, {"full": "file:///Users/dongheonryu/Downloads/0302/\ucd5c\uc885\ubcf4\uc815\ubcf8/7R300311.jpg", "thumb": "file:///Users/dongheonryu/Desktop/AI_Project/gemini_test/thumbnails/7R300311.jpg"}, {"full": "file:///Users/dongheonryu/Downloads/0302/\ucd5c\uc885\ubcf4\uc815\ubcf8/7R300322.jpg", "thumb": "file:///Users/dongheonryu/Desktop/AI_Project/gemini_test/thumbnails/7R300322.jpg"}, {"full": "file:///Users/dongheonryu/Downloads/0302/\ucd5c\uc885\ubcf4\uc815\ubcf8/7R300323.jpg", "thumb": "file:///Users/dongheonryu/Desktop/AI_Project/gemini_test/thumbnails/7R300323.jpg"}, {"full": "file:///Users/dongheonryu/Downloads/0302/\ucd5c\uc885\ubcf4\uc815\ubcf8/7R300346.jpg", "thumb": "file:///Users/dongheonryu/Desktop/AI_Project/gemini_test/thumbnails/7R300346.jpg"}, {"full": "file:///Users/dongheonryu/Downloads/0302/\ucd5c\uc885\ubcf4\uc815\ubcf8/7R300391.jpg", "thumb": "file:///Users/dongheonryu/Desktop/AI_Project/gemini_test/thumbnails/7R300391.jpg"}, {"full": "file:///Users/dongheonryu/Downloads/0302/\ucd5c\uc885\ubcf4\uc815\ubcf8/7R300407.jpg", "thumb": "file:///Users/dongheonryu/Desktop/AI_Project/gemini_test/thumbnails/7R300407.jpg"}, {"full": "file:///Users/dongheonryu/Downloads/0302/\ucd5c\uc885\ubcf4\uc815\ubcf8/7R300439.jpg", "thumb": "file:///Users/dongheonryu/Desktop/AI_Project/gemini_test/thumbnails/7R300439.jpg"}, {"full": "file:///Users/dongheonryu/Downloads/0302/\ucd5c\uc885\ubcf4\uc815\ubcf8/7R300449.jpg", "thumb": "file:///Users/dongheonryu/Desktop/AI_Project/gemini_test/thumbnails/7R300449.jpg"}, {"full": "file:///Users/dongheonryu/Downloads/0302/\ucd5c\uc885\ubcf4\uc815\ubcf8/7R300471.jpg", "thumb": "file:///Users/dongheonryu/Desktop/AI_Project/gemini_test/thumbnails/7R300471.jpg"}, {"full": "file:///Users/dongheonryu/Downloads/0302/\ucd5c\uc885\ubcf4\uc815\ubcf8/7R300476.jpg", "thumb": "file:///Users/dongheonryu/Desktop/AI_Project/gemini_test/thumbnails/7R300476.jpg"}, {"full": "file:///Users/dongheonryu/Downloads/0302/\ucd5c\uc885\ubcf4\uc815\ubcf8/7R300488.jpg", "thumb": "file:///Users/dongheonryu/Desktop/AI_Project/gemini_test/thumbnails/7R300488.jpg"}, {"full": "file:///Users/dongheonryu/Downloads/0302/\ucd5c\uc885\ubcf4\uc815\ubcf8/7R300490.jpg", "thumb": "file:///Users/dongheonryu/Desktop/AI_Project/gemini_test/thumbnails/7R300490.jpg"}, {"full": "file:///Users/dongheonryu/Downloads/0302/\ucd5c\uc885\ubcf4\uc815\ubcf8/7R300496.jpg", "thumb": "file:///Users/dongheonryu/Desktop/AI_Project/gemini_test/thumbnails/7R300496.jpg"}, {"full": "file:///Users/dongheonryu/Downloads/0302/\ucd5c\uc885\ubcf4\uc815\ubcf8/7R300505.jpg", "thumb": "file:///Users/dongheonryu/Desktop/AI_Project/gemini_test/thumbnails/7R300505.jpg"}, {"full": "file:///Users/dongheonryu/Downloads/0302/\ucd5c\uc885\ubcf4\uc815\ubcf8/7R300534.jpg", "thumb": "file:///Users/dongheonryu/Desktop/AI_Project/gemini_test/thumbnails/7R300534.jpg"}, {"full": "file:///Users/dongheonryu/Downloads/0302/\ucd5c\uc885\ubcf4\uc815\ubcf8/7R300539.jpg", "thumb": "file:///Users/dongheonryu/Desktop/AI_Project/gemini_test/thumbnails/7R300539.jpg"}, {"full": "file:///Users/dongheonryu/Downloads/0302/\ucd5c\uc885\ubcf4\uc815\ubcf8/7R300568.jpg", "thumb": "file:///Users/dongheonryu/Desktop/AI_Project/gemini_test/thumbnails/7R300568.jpg"}, {"full": "file:///Users/dongheonryu/Downloads/0302/\ucd5c\uc885\ubcf4\uc815\ubcf8/7R300571.jpg", "thumb": "file:///Users/dongheonryu/Desktop/AI_Project/gemini_test/thumbnails/7R300571.jpg"}, {"full": "file:///Users/dongheonryu/Downloads/0302/\ucd5c\uc885\ubcf4\uc815\ubcf8/7R300580.jpg", "thumb": "file:///Users/dongheonryu/Desktop/AI_Project/gemini_test/thumbnails/7R300580.jpg"}, {"full": "file:///Users/dongheonryu/Downloads/0302/\ucd5c\uc885\ubcf4\uc815\ubcf8/7R300582.jpg", "thumb": "file:///Users/dongheonryu/Desktop/AI_Project/gemini_test/thumbnails/7R300582.jpg"}, {"full": "file:///Users/dongheonryu/Downloads/0302/\ucd5c\uc885\ubcf4\uc815\ubcf8/7R300629.jpg", "thumb": "file:///Users/dongheonryu/Desktop/AI_Project/gemini_test/thumbnails/7R300629.jpg"}, {"full": "file:///Users/dongheonryu/Downloads/0302/\ucd5c\uc885\ubcf4\uc815\ubcf8/7R300745.jpg", "thumb": "file:///Users/dongheonryu/Desktop/AI_Project/gemini_test/thumbnails/7R300745.jpg"}, {"full": "file:///Users/dongheonryu/Downloads/0302/\ucd5c\uc885\ubcf4\uc815\ubcf8/7R300771.jpg", "thumb": "file:///Users/dongheonryu/Desktop/AI_Project/gemini_test/thumbnails/7R300771.jpg"}, {"full": "file:///Users/dongheonryu/Downloads/0302/\ucd5c\uc885\ubcf4\uc815\ubcf8/7R300773.jpg", "thumb": "file:///Users/dongheonryu/Desktop/AI_Project/gemini_test/thumbnails/7R300773.jpg"}, {"full": "file:///Users/dongheonryu/Downloads/0302/\ucd5c\uc885\ubcf4\uc815\ubcf8/7R300779.jpg", "thumb": "file:///Users/dongheonryu/Desktop/AI_Project/gemini_test/thumbnails/7R300779.jpg"}];
+        const galleryWrapper = document.getElementById('gallery-wrapper');
+        const lightboxWrapper = document.getElementById('lightbox-wrapper');
+        
+        for (let i = 0; i < photoData.length; i += 4) {
+            const slide = document.createElement('div');
+            slide.className = 'swiper-slide swiper-slide-gallery';
+            photoData.slice(i, i + 4).forEach((photo, idx) => {
+                const img = document.createElement('img');
+                img.src = photo.thumb;
+                img.onclick = () => openLightbox(i + idx);
+                slide.appendChild(img);
+            });
+            galleryWrapper.appendChild(slide);
+        }
+
+        photoData.forEach(photo => {
+            const slide = document.createElement('div');
+            slide.className = 'swiper-slide swiper-slide-lightbox';
+            const img = document.createElement('img');
+            img.src = photo.full;
+            slide.appendChild(img);
+            lightboxWrapper.appendChild(slide);
+        });
+
+        const gallerySwiper = new Swiper('.swiper-gallery', { slidesPerView: 1, spaceBetween: 10, navigation: { nextEl: '.swiper-button-next', prevEl: '.swiper-button-prev' } });
+        const lightboxSwiper = new Swiper('.swiper-lightbox', { slidesPerView: 1, spaceBetween: 0, loop: true, navigation: { nextEl: '.swiper-button-next', prevEl: '.swiper-button-prev' } });
+
+        function openLightbox(idx) { document.getElementById('lightbox').style.display = 'flex'; lightboxSwiper.slideToLoop(idx, 0); document.body.style.overflow = 'hidden'; }
+        function closeLightbox() { document.getElementById('lightbox').style.display = 'none'; document.body.style.overflow = 'auto'; }
+        function copyToClipboard(text) { navigator.clipboard.writeText(text).then(() => alert('계좌번호가 복사되었습니다.')); }
+
+        // Guestbook Logic with Pagination
+        let currentPage = 1;
+        const pageSize = 5;
+
+        function loadGuestbook() {
+            const fullList = JSON.parse(localStorage.getItem('wedding_gb') || '[]').reverse();
+            const totalItems = fullList.length;
+            const totalPages = Math.ceil(totalItems / pageSize);
+            
+            // Adjust current page if out of bounds
+            if (currentPage > totalPages && totalPages > 0) currentPage = totalPages;
+            if (currentPage < 1) currentPage = 1;
+
+            const startIndex = (currentPage - 1) * pageSize;
+            const pagedList = fullList.slice(startIndex, startIndex + pageSize);
+
+            // Render List
+            const container = document.getElementById('gb-list');
+            if (pagedList.length === 0) {
+                container.innerHTML = '<p style="text-align:center; color:#999; font-size:13px; margin:20px 0;">첫 번째 축하 메시지를 남겨주세요.</p>';
+                document.getElementById('pagination').innerHTML = '';
+                return;
+            }
+
+            container.innerHTML = pagedList.map(item => `
+                <div class="guestbook-item">
+                    <div class="guestbook-name">${item.name}</div>
+                    <div class="guestbook-msg">${item.msg}</div>
+                </div>
+            `).join('');
+
+            // Render Pagination
+            const pagination = document.getElementById('pagination');
+            pagination.innerHTML = `
+                <button class="page-btn" ${currentPage === 1 ? 'disabled' : ''} onclick="changePage(-1)">이전</button>
+                <span class="page-info">${currentPage} / ${totalPages || 1}</span>
+                <button class="page-btn" ${currentPage === totalPages || totalPages === 0 ? 'disabled' : ''} onclick="changePage(1)">다음</button>
+            `;
+        }
+
+        function changePage(offset) {
+            currentPage += offset;
+            loadGuestbook();
+        }
+
+        function addGuestbook() {
+            const name = document.getElementById('gb-name').value;
+            const msg = document.getElementById('gb-msg').value;
+            if (!name || !msg) return alert('성함과 메시지를 입력해주세요.');
+            
+            const list = JSON.parse(localStorage.getItem('wedding_gb') || '[]');
+            list.push({ name, msg });
+            localStorage.setItem('wedding_gb', JSON.stringify(list));
+            
+            document.getElementById('gb-name').value = '';
+            document.getElementById('gb-msg').value = '';
+            
+            currentPage = 1; // Go to first page to see new message
+            loadGuestbook();
+        }
+
+        window.onload = loadGuestbook;
+    </script>
+</body>
+</html>

@@ -78,7 +78,6 @@ def generate_invitation_html(data, output_path="index.html"):
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>{{groom_name}} ♥ {{bride_name}} 결혼합니다</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
-    <script src="https://t1.kakaocdn.net/kakao_js_sdk/2.7.0/kakao.min.js"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Gowun+Batang&display=swap');
         
@@ -142,11 +141,9 @@ def generate_invitation_html(data, output_path="index.html"):
         .share-btn { background: var(--accent-color); color: #fff; font-weight: bold; width: 100%; margin-top: 10px; height: 45px; font-size: 14px; border-radius: 8px; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; }
         .flower-btn { background: var(--white); color: #333; border: 1px solid #ddd; width: 100%; margin-top: 10px; height: 45px; font-size: 14px; border-radius: 8px; cursor: pointer; text-decoration: none; display: flex; align-items: center; justify-content: center; gap: 8px; }
 
-        /* Naver Map Style */
-        .map-container { width: 100%; height: auto; margin: 20px 0; border-radius: 8px; overflow: hidden; border: 1px solid #eee; cursor: pointer; position: relative; }
-        .map-container img { width: 100%; display: block; }
-        .map-overlay-btn { position: absolute; bottom: 15px; left: 50%; transform: translateX(-50%); background: #03c75a; color: #fff; padding: 8px 15px; border-radius: 4px; font-size: 12px; font-weight: bold; box-shadow: 0 2px 10px rgba(0,0,0,0.2); }
-
+        /* Naver Map Container */
+        .map-wrapper { width: 100%; height: 350px; margin: 20px 0; border-radius: 8px; overflow: hidden; border: 1px solid #eee; }
+        
         .map-btn-group { display: flex; gap: 8px; justify-content: center; margin-top: 10px; flex-wrap: wrap; }
         .map-btn { padding: 10px 12px; background: var(--accent-color); color: #fff; text-decoration: none; border-radius: 20px; font-size: 12px; min-width: 80px; text-align: center; }
         .kakao-btn { background: #fee500; color: #3c1e1e; }
@@ -154,7 +151,7 @@ def generate_invitation_html(data, output_path="index.html"):
         
         .transport-item { text-align: left; margin-bottom: 25px; padding-left: 10px; border-left: 2px solid var(--accent-color); }
         .transport-title { font-weight: bold; color: var(--accent-color); font-size: 15px; margin-bottom: 5px; }
-        .transport-desc { font-size: 14px; color: #444; line-height: 1.6; }
+        .transport-desc { font-size: 14px; color: #666; line-height: 1.6; }
         .footer { padding: 40px; text-align: center; font-size: 12px; color: #aaa; background: #fafafa; }
     </style>
 </head>
@@ -172,12 +169,12 @@ def generate_invitation_html(data, output_path="index.html"):
             <div class="family-section">
                 <div class="family-side">
                     <div class="family-parents">{{groom_father}}<br>{{groom_mother}}</div>
-                    <div class="family-relation">의 아들</div>
+                    <div class="family-relation">아들</div>
                     <div class="family-child">{{groom_name}}</div>
                 </div>
                 <div class="family-side">
                     <div class="family-parents">{{bride_father}}<br>{{bride_mother}}</div>
-                    <div class="family-relation">의 딸</div>
+                    <div class="family-relation">딸</div>
                     <div class="family-child">{{bride_name}}</div>
                 </div>
             </div>
@@ -203,13 +200,10 @@ def generate_invitation_html(data, output_path="index.html"):
             <h2 style="color: var(--accent-color); font-weight: normal; letter-spacing: 2px;">오시는 길</h2>
             <p style="margin-bottom: 5px;"><strong>노블발렌티 <span style="font-weight:bold;">대치점</span> {{hall_detail}}</strong></p>
             <p class="note-subtitle">*삼성점이 아니오니 유의 부탁드립니다.</p>
-            <p style="font-size: 14px; color: #444;">{{address}}</p>
+            <p style="font-size: 14px; color: #888;">{{address}}</p>
             
-            <!-- Real Naver Map View (Direct Image for Mobile Reliability) -->
-            <div class="map-container" onclick="window.open('https://map.naver.com/v5/search/%EB%85%B8%EB%B8%94%EB%B0%9C%EB%A0%8C%ED%8B%B0%20%EB%8C%80%EC%B9%98', '_blank')">
-                <img src="https://cdn.imweb.me/thumbnail/20251224/804939816d76a.jpg" alt="Map View">
-                <div class="map-overlay-btn">네이버 지도 바로가기</div>
-            </div>
+            <!-- Real Naver Map API Container -->
+            <div id="map" class="map-wrapper"></div>
 
             <div class="map-btn-group">
                 <a href="https://surl.tmap.co.kr/6866666c" target="_blank" class="map-btn tmap-btn">티맵</a>
@@ -247,7 +241,27 @@ def generate_invitation_html(data, output_path="index.html"):
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+    <!-- Naver Map API (Client ID Required) -->
+    <script type="text/javascript" src="https://oapi.map.naver.com/openapi/v3/maps.js?ncpClientId=발급받은_ID_입력"></script>
     <script>
+        // 1. Map Initialization
+        window.addEventListener('load', () => {
+            try {
+                const mapOptions = {
+                    center: new naver.maps.LatLng(37.503300, 127.065455),
+                    zoom: 16
+                };
+                const map = new naver.maps.Map('map', mapOptions);
+                const marker = new naver.maps.Marker({
+                    position: new naver.maps.LatLng(37.503300, 127.065455),
+                    map: map
+                });
+            } catch(e) {
+                console.error("Map Load Error", e);
+                document.getElementById('map').innerHTML = '<div style="display:flex; justify-content:center; align-items:center; height:100%; color:#888; text-align:center; padding:20px;">네이버 지도 API 키를 등록해주세요.<br>설명된 가이드를 따라 Client ID를 입력하면<br>지도가 활성화됩니다.</div>';
+            }
+        });
+
         const weddingDate = new Date("2026-08-22").getTime();
         const now = new Date().getTime();
         const dDayCount = Math.ceil((weddingDate - now) / (1000 * 60 * 60 * 24));
@@ -311,7 +325,7 @@ def generate_invitation_html(data, output_path="index.html"):
 """
     account_html = ""
     for acc in data['accounts']:
-        account_html += f"""<div class="account-item"><strong>{acc['owner']}</strong><div class="account-info"><small style="color:#444;">{acc['bank']} {acc['number']}</small><div class="btn-group"><a href="tel:{acc['phone']}" class="small-btn phone-btn">📞</a><button class="small-btn" onclick="copyToClipboard('{acc['number'].replace("-", "")}')">복사</button></div></div></div>"""
+        account_html += f"""<div class="account-item"><strong>{acc['owner']}</strong><div class="account-info"><small style="color:#666;">{acc['bank']} {acc['number']}</small><div class="btn-group"><a href="tel:{acc['phone']}" class="small-btn phone-btn">📞</a><button class="small-btn" onclick="copyToClipboard('{acc['number'].replace("-", "")}')">복사</button></div></div></div>"""
 
     html_content = template_text
     html_content = html_content.replace("{{groom_name}}", data['groom']['name']).replace("{{bride_name}}", data['bride']['name'])
@@ -326,7 +340,7 @@ def generate_invitation_html(data, output_path="index.html"):
 
     with open(output_path, "w", encoding="utf-8") as f:
         f.write(html_content)
-    print(f"Refined invitation updated and generated at: {os.path.abspath(output_path)}")
+    print(f"Refined invitation with Naver Map API generated at: {os.path.abspath(output_path)}")
 
 if __name__ == "__main__":
     generate_invitation_html(MY_DATA)

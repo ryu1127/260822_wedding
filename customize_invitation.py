@@ -88,10 +88,21 @@ def generate_invitation_html(data, output_path="index.html"):
         
         .section { padding: 60px 20px; text-align: center; border-bottom: 1px solid #f0f0f0; }
         
-        .reveal { opacity: 0; transform: translateY(30px); transition: all 1s ease-out; }
+        /* Repeatable Reveal Animation */
+        .reveal { opacity: 0; transform: translateY(30px); transition: all 0.8s ease-out; }
         .reveal.active { opacity: 1; transform: translateY(0); }
 
+        /* Main Photo & D-Day Overlay */
+        .main-photo-wrap { position: relative; width: 100%; }
         .main-photo img { width: 100%; display: block; }
+        .d-day-badge { 
+            position: absolute; top: 20px; right: 20px; 
+            background: rgba(189, 125, 30, 0.85); color: #fff; 
+            padding: 8px 15px; border-radius: 20px; font-size: 14px; 
+            letter-spacing: 1px; font-weight: bold; box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+            z-index: 10;
+        }
+
         .names { font-size: 24px; margin-bottom: 10px; color: var(--accent-color); }
         .date-info { font-size: 16px; color: var(--gray-text); margin-bottom: 30px; }
         .note-subtitle { font-size: 13px; color: var(--gray-text); margin-top: -10px; margin-bottom: 20px; }
@@ -113,7 +124,7 @@ def generate_invitation_html(data, output_path="index.html"):
         
         .btn-group { display: flex; gap: 5px; }
         .small-btn { padding: 6px 12px; background: var(--accent-color); color: #fff; border: none; border-radius: 4px; font-size: 12px; cursor: pointer; text-decoration: none; display: inline-block; }
-        .phone-btn { background: #8e9775; } 
+        .phone-btn { background: #5cb85c; } 
         
         .share-btn { background: var(--accent-color); color: #fff; font-weight: bold; width: 100%; margin-top: 10px; height: 45px; font-size: 14px; border-radius: 8px; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; }
         .flower-btn { background: var(--white); color: #333; border: 1px solid #ddd; width: 100%; margin-top: 10px; height: 45px; font-size: 14px; border-radius: 8px; cursor: pointer; text-decoration: none; display: flex; align-items: center; justify-content: center; gap: 8px; }
@@ -135,7 +146,10 @@ def generate_invitation_html(data, output_path="index.html"):
 </head>
 <body>
     <div class="container">
-        <div class="main-photo reveal"><img src="{{cover_photo}}" alt="Cover"></div>
+        <div class="main-photo-wrap">
+            <div class="d-day-badge" id="d-day-text">D-Day</div>
+            <div class="main-photo"><img src="{{cover_photo}}" alt="Cover"></div>
+        </div>
         
         <div class="section reveal">
             <div class="names">{{groom_name}} & {{bride_name}}</div>
@@ -205,16 +219,27 @@ def generate_invitation_html(data, output_path="index.html"):
 
     <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
     <script>
-        // 1. Reveal on scroll
+        // 1. D-Day Logic
+        const weddingDate = new Date("2026-08-22").getTime();
+        const now = new Date().getTime();
+        const distance = weddingDate - now;
+        const dDayCount = Math.ceil(distance / (1000 * 60 * 60 * 24));
+        const dDayElement = document.getElementById('d-day-text');
+        if (dDayCount > 0) dDayElement.innerText = `D-${dDayCount}`;
+        else if (dDayCount === 0) dDayElement.innerText = `D-Day`;
+        else dDayElement.style.display = 'none';
+
+        // 2. Repeatable Reveal on scroll
         const reveals = document.querySelectorAll('.reveal');
         const observer = new IntersectionObserver(entries => {
             entries.forEach(entry => {
                 if (entry.isIntersecting) entry.target.classList.add('active');
+                else entry.target.classList.remove('active'); // Repeats effect
             });
         }, { threshold: 0.1 });
         reveals.forEach(r => observer.observe(r));
 
-        // 2. Photo Data
+        // 3. Photo Data
         const photoData = {{photo_data_json}};
         const galleryWrapper = document.getElementById('gallery-wrapper');
         const lightboxWrapper = document.getElementById('lightbox-wrapper');
@@ -276,7 +301,6 @@ def generate_invitation_html(data, output_path="index.html"):
         
         function copyToClipboard(text) { navigator.clipboard.writeText(text).then(() => alert('계좌번호가 복사되었습니다.')); }
 
-        // 3. Native Link Share
         function shareInvitation() {
             if (navigator.share) {
                 navigator.share({
@@ -285,7 +309,6 @@ def generate_invitation_html(data, output_path="index.html"):
                     url: window.location.href,
                 }).catch(console.error);
             } else {
-                // Fallback: Copy to clipboard
                 navigator.clipboard.writeText(window.location.href).then(() => {
                     alert('청첩장 링크가 복사되었습니다. 카카오톡 등 원하는 곳에 붙여넣어 공유해 주세요!');
                 });
@@ -310,7 +333,7 @@ def generate_invitation_html(data, output_path="index.html"):
 
     with open(output_path, "w", encoding="utf-8") as f:
         f.write(html_content)
-    print(f"Refined invitation updated and generated at: {os.path.abspath(output_path)}")
+    print(f"Refined invitation with repeatable effects and D-Day badge generated at: {os.path.abspath(output_path)}")
 
 if __name__ == "__main__":
     generate_invitation_html(MY_DATA)

@@ -97,7 +97,6 @@ def generate_invitation_html(data, output_path="index.html"):
         .reveal { opacity: 0; transform: translateY(30px); transition: all 0.8s ease-out; }
         .reveal.active { opacity: 1; transform: translateY(0); }
 
-        /* Main Photo & D-Day Overlay */
         .main-photo-wrap { position: relative; width: 100%; }
         .main-photo img { width: 100%; display: block; }
         .d-day-badge { 
@@ -109,13 +108,14 @@ def generate_invitation_html(data, output_path="index.html"):
         }
 
         .names { font-size: 24px; margin-bottom: 10px; color: var(--accent-color); font-weight: bold; }
+        .names span { font-size: 18px; vertical-align: middle; margin: 0 5px; opacity: 0.8; }
         .date-info { font-size: 16px; color: var(--gray-text); margin-bottom: 30px; }
 
-        /* Parents Info Section (Side by Side, One Line Names) */
         .family-section { display: flex; justify-content: space-around; align-items: flex-start; margin: 30px 0; border-top: 1px solid #eee; border-bottom: 1px solid #eee; padding: 30px 0; }
         .family-side { flex: 1; text-align: center; }
         .family-side:first-child { border-right: 1px solid #eee; }
-        .family-parents { font-size: 16px; margin-bottom: 8px; line-height: 1.6; display: flex; justify-content: center; gap: 8px; }
+        .family-parents { font-size: 16px; margin-bottom: 8px; line-height: 1.6; display: flex; justify-content: center; gap: 5px; }
+        .family-parents span.amp { font-size: 14px; color: #aaa; margin: 0 2px; }
         .family-relation { font-size: 13px; color: #888; margin-bottom: 5px; }
         .family-child { font-size: 18px; font-weight: bold; color: var(--accent-color); }
 
@@ -141,9 +141,7 @@ def generate_invitation_html(data, output_path="index.html"):
         .share-btn { background: var(--accent-color); color: #fff; font-weight: bold; width: 100%; margin-top: 10px; height: 45px; font-size: 14px; border-radius: 8px; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; }
         .flower-btn { background: var(--white); color: #333; border: 1px solid #ddd; width: 100%; margin-top: 10px; height: 45px; font-size: 14px; border-radius: 8px; cursor: pointer; text-decoration: none; display: flex; align-items: center; justify-content: center; gap: 8px; }
 
-        /* Google Map Embed */
         .map-container { width: 100%; height: 350px; margin: 20px 0; border-radius: 8px; overflow: hidden; border: 1px solid #eee; }
-        
         .map-btn-group { display: flex; gap: 8px; justify-content: center; margin-top: 10px; flex-wrap: wrap; }
         .map-btn { padding: 10px 12px; background: var(--accent-color); color: #fff; text-decoration: none; border-radius: 20px; font-size: 12px; min-width: 80px; text-align: center; }
         .kakao-btn { background: #fee500; color: #3c1e1e; }
@@ -163,17 +161,21 @@ def generate_invitation_html(data, output_path="index.html"):
         </div>
         
         <div class="section reveal">
-            <div class="names">{{groom_name}} & {{bride_name}}</div>
+            <div class="names">{{groom_name}} <span>♥</span> {{bride_name}}</div>
             <div class="date-info">2026. 08. 22 토요일 12:30</div>
             
             <div class="family-section">
                 <div class="family-side">
-                    <div class="family-parents"><span>{{groom_father}}</span> <span>{{groom_mother}}</span></div>
+                    <div class="family-parents">
+                        {{groom_father}}<span class="amp">&</span>{{groom_mother}}
+                    </div>
                     <div class="family-relation">아들</div>
                     <div class="family-child">{{groom_name}}</div>
                 </div>
                 <div class="family-side">
-                    <div class="family-parents"><span>{{bride_father}}</span> <span>{{bride_mother}}</span></div>
+                    <div class="family-parents">
+                        {{bride_father}}<span class="amp">&</span>{{bride_mother}}
+                    </div>
                     <div class="family-relation">딸</div>
                     <div class="family-child">{{bride_name}}</div>
                 </div>
@@ -202,7 +204,6 @@ def generate_invitation_html(data, output_path="index.html"):
             <p class="note-subtitle">*삼성점이 아니오니 유의 부탁드립니다.</p>
             <p style="font-size: 14px; color: #444;">{{address}}</p>
             
-            <!-- Embedded Google Map -->
             <div class="map-container">
                 <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3165.140461243454!2d127.0632663763564!3d37.50330422701411!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x357ca44090900001%3A0x2f8f0f0f0f0f0f0f!2z64W467iU67Cc66CM7YisIOuMgOueygkA!5e0!3m2!1sko!2skr!4v1712920000000!5m2!1sko!2skr" width="100%" height="100%" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
             </div>
@@ -322,7 +323,7 @@ def generate_invitation_html(data, output_path="index.html"):
 
     with open(output_path, "w", encoding="utf-8") as f:
         f.write(html_content)
-    print(f"Refined invitation with Google Map and one-line parents info generated at: {os.path.abspath(output_path)}")
+    print(f"Refined invitation with updated symbols generated at: {os.path.abspath(output_path)}")
 
 if __name__ == "__main__":
     generate_invitation_html(MY_DATA)

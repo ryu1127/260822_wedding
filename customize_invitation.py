@@ -72,21 +72,30 @@ def generate_invitation_html(data, output_path="index.html"):
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>{{groom_name}} ♥ {{bride_name}} 결혼합니다</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
-    <script src="https://t1.kakaocdn.net/kakao_js_sdk/2.7.0/kakao.min.js" integrity="sha384-l6S9p9NoAn7GnEALcaS7Ssh9vYpYpHshGRGwZf9f9ksNCfIzZ6XnxnVvIn2OnYka" crossorigin="anonymous"></script>
+    <script src="https://t1.kakaocdn.net/kakao_js_sdk/2.7.0/kakao.min.js"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Gowun+Batang&display=swap');
-        body { font-family: 'Gowun Batang', serif; margin: 0; padding: 0; background-color: #fefcf3; color: #333; display: flex; justify-content: center; }
-        .container { max-width: 480px; width: 100%; background: #fff; box-shadow: 0 0 20px rgba(0,0,0,0.05); overflow-x: hidden; }
+        
+        /* Theme Settings */
+        :root {
+            --bg-color: #e2d5dd;
+            --text-color: #000000;
+            --accent-color: #a68ba5; /* Slightly darker mauve for buttons */
+            --white: #ffffff;
+        }
+
+        body { font-family: 'Gowun Batang', serif; margin: 0; padding: 0; background-color: var(--bg-color); color: var(--text-color); display: flex; justify-content: center; }
+        .container { max-width: 480px; width: 100%; background: var(--bg-color); overflow-x: hidden; position: relative; }
         
         /* Reveal Animation */
         .reveal { opacity: 0; transform: translateY(30px); transition: all 1s ease-out; }
         .reveal.active { opacity: 1; transform: translateY(0); }
 
-        .section { padding: 60px 20px; text-align: center; border-bottom: 1px solid #f0f0f0; }
+        .section { padding: 60px 20px; text-align: center; border-bottom: 1px solid rgba(0,0,0,0.05); }
         .main-photo img { width: 100%; display: block; }
-        .names { font-size: 24px; margin-bottom: 10px; color: #bd7d1e; }
-        .date-info { font-size: 16px; color: #888; margin-bottom: 30px; }
-        .note-subtitle { font-size: 13px; color: #999; margin-top: -10px; margin-bottom: 20px; }
+        .names { font-size: 24px; margin-bottom: 10px; color: var(--text-color); font-weight: bold; }
+        .date-info { font-size: 16px; color: #555; margin-bottom: 30px; }
+        .note-subtitle { font-size: 13px; color: #666; margin-top: -10px; margin-bottom: 20px; }
 
         .swiper-gallery { width: 100%; height: 480px; margin: 20px 0; }
         .swiper-slide-gallery { display: grid; grid-template-columns: repeat(2, 1fr); grid-template-rows: repeat(2, 1fr); gap: 10px; padding: 10px; box-sizing: border-box; }
@@ -98,35 +107,36 @@ def generate_invitation_html(data, output_path="index.html"):
         .swiper-slide-lightbox img { max-width: 100%; max-height: 90vh; object-fit: contain; display: block; }
         #lightbox .close { position: absolute; top: 30px; right: 20px; color: #fff; font-size: 40px; cursor: pointer; z-index: 2100; padding: 10px; line-height: 1; }
 
-        .box-style { background: #f9f9f9; padding: 20px; border-radius: 8px; margin-top: 20px; text-align: left; border: 1px solid #eee; }
-        .account-item { margin-bottom: 15px; border-bottom: 1px solid #eee; padding-bottom: 10px; }
+        /* Box Styles */
+        .box-style { background: rgba(255, 255, 255, 0.4); padding: 20px; border-radius: 12px; margin-top: 20px; text-align: left; border: 1px solid rgba(255,255,255,0.5); }
+        .account-item { margin-bottom: 15px; border-bottom: 1px solid rgba(0,0,0,0.05); padding-bottom: 10px; }
         .account-item:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
         .account-info { display: flex; justify-content: space-between; align-items: center; margin-top: 5px; }
+        
         .btn-group { display: flex; gap: 5px; }
-        .small-btn { padding: 6px 12px; background: #bd7d1e; color: #fff; border: none; border-radius: 4px; font-size: 12px; cursor: pointer; text-decoration: none; display: inline-block; }
-        .phone-btn { background: #5cb85c; }
+        .small-btn { padding: 6px 12px; background: var(--accent-color); color: #fff; border: none; border-radius: 4px; font-size: 12px; cursor: pointer; text-decoration: none; display: inline-block; }
+        .phone-btn { background: #8e9775; } /* Subdued olive green */
+        
         .share-btn { background: #fee500; color: #3c1e1e; font-weight: bold; width: 100%; margin-top: 10px; height: 45px; font-size: 14px; border-radius: 8px; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; }
-        .flower-btn { background: #fff; color: #333; border: 1px solid #ddd; width: 100%; margin-top: 10px; height: 45px; font-size: 14px; border-radius: 8px; cursor: pointer; text-decoration: none; display: flex; align-items: center; justify-content: center; gap: 8px; }
+        .flower-btn { background: var(--white); color: #333; border: 1px solid #ddd; width: 100%; margin-top: 10px; height: 45px; font-size: 14px; border-radius: 8px; cursor: pointer; text-decoration: none; display: flex; align-items: center; justify-content: center; gap: 8px; }
 
-        /* Naver Map Direct View */
-        .map-container { width: 100%; height: 250px; margin: 20px 0; border-radius: 8px; overflow: hidden; border: 1px solid #eee; cursor: pointer; position: relative; }
-        .map-container img { width: 100%; height: 100%; object-fit: cover; }
-        .map-overlay-btn { position: absolute; bottom: 15px; left: 50%; transform: translateX(-50%); background: #03c75a; color: #fff; padding: 8px 15px; border-radius: 4px; font-size: 12px; font-weight: bold; box-shadow: 0 2px 10px rgba(0,0,0,0.2); }
-
+        /* Map Embed */
+        .map-container { width: 100%; height: 300px; margin: 20px 0; border-radius: 8px; overflow: hidden; border: 1px solid rgba(0,0,0,0.1); background: #eee; }
+        
         .map-btn-group { display: flex; gap: 8px; justify-content: center; margin-top: 10px; flex-wrap: wrap; }
-        .map-btn { padding: 10px 12px; background: #bd7d1e; color: #fff; text-decoration: none; border-radius: 20px; font-size: 12px; min-width: 80px; text-align: center; }
+        .map-btn { padding: 10px 12px; background: var(--accent-color); color: #fff; text-decoration: none; border-radius: 20px; font-size: 12px; min-width: 80px; text-align: center; }
         .kakao-btn { background: #fee500; color: #3c1e1e; }
         .tmap-btn { background: #1a73e8; color: #fff; }
         
-        .transport-item { text-align: left; margin-bottom: 25px; padding-left: 10px; border-left: 2px solid #f3d090; }
-        .transport-title { font-weight: bold; color: #bd7d1e; font-size: 15px; margin-bottom: 5px; }
-        .transport-desc { font-size: 14px; color: #666; line-height: 1.6; }
-        .footer { padding: 40px; text-align: center; font-size: 12px; color: #aaa; background: #fafafa; }
+        .transport-item { text-align: left; margin-bottom: 25px; padding-left: 10px; border-left: 2px solid var(--accent-color); }
+        .transport-title { font-weight: bold; color: var(--text-color); font-size: 15px; margin-bottom: 5px; }
+        .transport-desc { font-size: 14px; color: #444; line-height: 1.6; }
+        .footer { padding: 40px; text-align: center; font-size: 12px; color: #777; background: rgba(0,0,0,0.02); }
     </style>
 </head>
 <body>
     <div class="container">
-        <div class="main-photo reveal"><img src="{{cover_photo}}" alt="Cover"></div>
+        <div class="main-photo"><img src="{{cover_photo}}" alt="Cover"></div>
         
         <div class="section reveal">
             <div class="names">{{groom_name}} & {{bride_name}}</div>
@@ -135,36 +145,34 @@ def generate_invitation_html(data, output_path="index.html"):
         </div>
 
         <div class="section greeting reveal">
-            <h2 style="color: #bd7d1e;">{{greeting_title}}</h2>
-            <p style="line-height: 2; white-space: pre-wrap;">{{greeting_message}}</p>
+            <h2 style="font-weight: normal; letter-spacing: 2px;">{{greeting_title}}</h2>
+            <p style="line-height: 2.2; white-space: pre-wrap; font-size: 15px;">{{greeting_message}}</p>
         </div>
 
         <div class="section reveal" style="padding: 60px 0;">
-            <h2 style="color: #bd7d1e;">Wedding Gallery</h2>
+            <h2 style="font-weight: normal; letter-spacing: 2px;">Wedding Gallery</h2>
             <div class="swiper swiper-gallery">
                 <div class="swiper-wrapper" id="gallery-wrapper"></div>
-                <div class="swiper-button-next" style="color: #bd7d1e;"></div>
-                <div class="swiper-button-prev" style="color: #bd7d1e;"></div>
+                <div class="swiper-button-next" style="color: var(--accent-color);"></div>
+                <div class="swiper-button-prev" style="color: var(--accent-color);"></div>
             </div>
         </div>
 
         <div class="section venue reveal">
-            <h2 style="color: #bd7d1e;">오시는 길</h2>
+            <h2 style="font-weight: normal; letter-spacing: 2px;">오시는 길</h2>
             <p style="margin-bottom: 5px;"><strong>노블발렌티 <span style="font-weight:bold;">대치점</span> {{hall_detail}}</strong></p>
             <p class="note-subtitle">*삼성점이 아니오니 유의 부탁드립니다.</p>
-            <p style="font-size: 14px; color: #888;">{{address}}</p>
+            <p style="font-size: 14px; color: #444;">{{address}}</p>
             
-            <div class="map-container" onclick="window.open('https://map.naver.com/v5/search/%EB%85%B8%EB%B8%94%EB%B0%9C%EB%A0%8C%ED%8B%B0%20%EB%8C%80%EC%B9%98', '_blank')">
-                <!-- 고화질 네이버 지도 캡처 이미지 -->
-                <img src="https://cdn.imweb.me/thumbnail/20251224/804939816d76a.jpg" alt="Naver Map View">
-                <div class="map-overlay-btn">네이버 지도 앱 열기</div>
-            </div>
+            <!-- Kakao Map Embed -->
+            <div class="map-container" id="kakao-map"></div>
 
             <div class="map-btn-group">
                 <a href="https://surl.tmap.co.kr/6866666c" target="_blank" class="map-btn tmap-btn">티맵</a>
                 <a href="https://map.naver.com/v5/search/%EB%85%B8%EB%B8%94%EB%B0%9C%EB%A0%8C%ED%8B%B0%20%EB%8C%80%EC%B9%98" target="_blank" class="map-btn">네이버 지도</a>
                 <a href="https://map.kakao.com/link/search/%EB%85%B8%EB%B8%94%EB%B0%9C%EB%A0%8C%ED%8B%B0%20%EB%8C%80%EC%B9%98%EC%A0%90" target="_blank" class="map-btn kakao-btn">카카오 맵</a>
             </div>
+            
             <div style="margin-top: 40px;">
                 <div class="transport-item"><div class="transport-title">지하철 및 셔틀버스</div><div class="transport-desc">{{subway}}</div></div>
                 <div class="transport-item"><div class="transport-title">버스</div><div class="transport-desc">{{bus}}</div></div>
@@ -173,11 +181,13 @@ def generate_invitation_html(data, output_path="index.html"):
         </div>
 
         <div class="section reveal">
-            <h2 style="color: #bd7d1e;">마음 전하실 곳</h2>
+            <h2 style="font-weight: normal; letter-spacing: 2px;">마음 전하실 곳</h2>
             <div class="box-style">{{account_items_html}}</div>
             
-            <a href="https://m.99flower.co.kr/" target="_blank" class="flower-btn">🌸 축하 화환 보내기</a>
-            <button class="share-btn" onclick="shareKakao()">💬 카카오톡 공유하기</button>
+            <div style="margin-top: 20px;">
+                <a href="https://m.99flower.co.kr/" target="_blank" class="flower-btn">🌸 축하 화환 보내기</a>
+                <button class="share-btn" onclick="shareKakao()">💬 카카오톡 공유하기</button>
+            </div>
         </div>
 
         <div class="footer">© {{wedding_year}} {{groom_name}} & {{bride_name}}</div>
@@ -193,8 +203,10 @@ def generate_invitation_html(data, output_path="index.html"):
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+    <!-- Kakao Map API -->
+    <script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=7e2f0606066060606060606060606060"></script>
     <script>
-        // Reveal on scroll
+        // 1. Reveal on scroll
         const reveals = document.querySelectorAll('.reveal');
         const observer = new IntersectionObserver(entries => {
             entries.forEach(entry => {
@@ -203,6 +215,27 @@ def generate_invitation_html(data, output_path="index.html"):
         }, { threshold: 0.1 });
         reveals.forEach(r => observer.observe(r));
 
+        // 2. Map Initialization
+        try {
+            const container = document.getElementById('kakao-map');
+            const options = {
+                center: new kakao.maps.LatLng(37.503300, 127.065455),
+                level: 3
+            };
+            const map = new kakao.maps.Map(container, options);
+            const markerPosition = new kakao.maps.LatLng(37.503300, 127.065455);
+            const marker = new kakao.maps.Marker({ position: markerPosition });
+            marker.setMap(map);
+            
+            const content = '<div style="padding:5px; font-size:12px; background:#fff; border:1px solid #ccc; border-radius:3px; color:#000;">노블발렌티 대치점</div>';
+            const infowindow = new kakao.maps.InfoWindow({ content: content });
+            infowindow.open(map, marker);
+        } catch(e) {
+            console.log("Map loading failed, showing placeholder.");
+            document.getElementById('kakao-map').innerHTML = '<div style="display:flex; justify-content:center; align-items:center; height:100%; color:#888;">지도를 불러올 수 없습니다.<br>하단 버튼을 이용해 주세요.</div>';
+        }
+
+        // 3. Gallery & Lightbox
         const photoData = {{photo_data_json}};
         const galleryWrapper = document.getElementById('gallery-wrapper');
         const lightboxWrapper = document.getElementById('lightbox-wrapper');
@@ -236,7 +269,7 @@ def generate_invitation_html(data, output_path="index.html"):
         function closeLightbox() { document.getElementById('lightbox').style.display = 'none'; document.body.style.overflow = 'auto'; }
         function copyToClipboard(text) { navigator.clipboard.writeText(text).then(() => alert('계좌번호가 복사되었습니다.')); }
 
-        // Kakao Share
+        // 4. Kakao Share
         Kakao.init('7e2f0606066060606060606060606060'); 
         function shareKakao() {
             if (!Kakao.isInitialized()) { alert('카카오톡 공유 기능을 준비 중입니다.'); return; }
@@ -257,7 +290,7 @@ def generate_invitation_html(data, output_path="index.html"):
 """
     account_html = ""
     for acc in data['accounts']:
-        account_html += f"""<div class="account-item"><strong>{acc['owner']}</strong><div class="account-info"><small style="color:#666;">{acc['bank']} {acc['number']}</small><div class="btn-group"><a href="tel:{acc['phone']}" class="small-btn phone-btn">전화</a><button class="small-btn" onclick="copyToClipboard('{acc['number'].replace("-", "")}')">복사</button></div></div></div>"""
+        account_html += f"""<div class="account-item"><strong>{acc['owner']}</strong><div class="account-info"><small style="color:#444;">{acc['bank']} {acc['number']}</small><div class="btn-group"><a href="tel:{acc['phone']}" class="small-btn phone-btn">전화</a><button class="small-btn" onclick="copyToClipboard('{acc['number'].replace("-", "")}')">복사</button></div></div></div>"""
 
     html_content = template_text
     html_content = html_content.replace("{{groom_name}}", data['groom_name']).replace("{{bride_name}}", data['bride_name'])
@@ -270,7 +303,7 @@ def generate_invitation_html(data, output_path="index.html"):
 
     with open(output_path, "w", encoding="utf-8") as f:
         f.write(html_content)
-    print(f"Refined invitation with Scroll Reveal and Map View generated at: {os.path.abspath(output_path)}")
+    print(f"Theme updated invitation generated at: {os.path.abspath(output_path)}")
 
 if __name__ == "__main__":
     generate_invitation_html(MY_DATA)

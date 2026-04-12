@@ -78,53 +78,48 @@ def generate_invitation_html(data, output_path="index.html"):
         
         :root {
             --bg-color: #fefcf3;
-            --point-pink: #e2d5dd;
-            --text-color: #000000;
-            --accent-color: #a68ba5;
+            --text-color: #333333;
+            --accent-color: #bd7d1e;
+            --gray-text: #888888;
+            --white: #ffffff;
         }
 
         body { font-family: 'Gowun Batang', serif; margin: 0; padding: 0; background-color: var(--bg-color); color: var(--text-color); display: flex; justify-content: center; }
-        .container { max-width: 480px; width: 100%; background: var(--bg-color); overflow-x: hidden; position: relative; }
+        .container { max-width: 480px; width: 100%; background: var(--white); box-shadow: 0 0 20px rgba(0,0,0,0.05); overflow-x: hidden; position: relative; }
         
-        /* Subtle Gradient Points */
-        .section { padding: 60px 20px; text-align: center; border-bottom: 1px solid rgba(0,0,0,0.03); position: relative; }
-        .section:nth-child(even) { background: linear-gradient(180deg, var(--bg-color) 0%, #f9f4f6 100%); }
-
+        .section { padding: 60px 20px; text-align: center; border-bottom: 1px solid #f0f0f0; }
+        
         .reveal { opacity: 0; transform: translateY(30px); transition: all 1s ease-out; }
         .reveal.active { opacity: 1; transform: translateY(0); }
 
         .main-photo img { width: 100%; display: block; }
-        .names { font-size: 24px; margin-bottom: 10px; color: var(--text-color); font-weight: bold; }
-        .date-info { font-size: 16px; color: #555; margin-bottom: 30px; }
-        .note-subtitle { font-size: 13px; color: #888; margin-top: -10px; margin-bottom: 20px; }
+        .names { font-size: 24px; margin-bottom: 10px; color: var(--accent-color); }
+        .date-info { font-size: 16px; color: var(--gray-text); margin-bottom: 30px; }
+        .note-subtitle { font-size: 13px; color: var(--gray-text); margin-top: -10px; margin-bottom: 20px; }
 
-        /* Gallery */
         .swiper-gallery { width: 100%; height: 480px; margin: 20px 0; }
         .swiper-slide-gallery { display: grid; grid-template-columns: repeat(2, 1fr); grid-template-rows: repeat(2, 1fr); gap: 10px; padding: 10px; box-sizing: border-box; }
         .swiper-slide-gallery img { width: 100%; height: 100%; object-fit: cover; border-radius: 4px; cursor: pointer; aspect-ratio: 1/1; }
         
-        /* Lightbox - iPhone Fixes */
-        #lightbox { display: none; position: fixed; top:0; left:0; width:100%; height:100%; background: rgba(0,0,0,0.98); z-index: 2000; flex-direction: column; justify-content: center; align-items: center; }
+        #lightbox { display: none; position: fixed; top:0; left:0; width:100%; height:100%; background: rgba(0,0,0,0.95); z-index: 2000; flex-direction: column; justify-content: center; align-items: center; }
         .swiper-lightbox { width: 100%; height: 100%; }
         .swiper-slide-lightbox { display: flex; justify-content: center; align-items: center; width: 100%; height: 100%; }
-        .swiper-slide-lightbox img { max-width: 100%; max-height: 90vh; object-fit: contain; pointer-events: none; }
-        #lightbox .close { position: absolute; top: 30px; right: 20px; color: #fff; font-size: 45px; cursor: pointer; z-index: 2100; padding: 10px; line-height: 1; text-shadow: 0 0 10px rgba(0,0,0,0.5); }
+        .swiper-slide-lightbox img { max-width: 100%; max-height: 90vh; object-fit: contain; }
+        #lightbox .close { position: absolute; top: 30px; right: 20px; color: #fff; font-size: 40px; cursor: pointer; z-index: 2100; padding: 10px; line-height: 1; }
 
-        /* Box Styles with subtle pink */
-        .box-style { background: var(--point-pink); padding: 20px; border-radius: 12px; margin-top: 20px; text-align: left; border: 1px solid rgba(255,255,255,0.3); opacity: 0.8; }
-        .account-item { margin-bottom: 15px; border-bottom: 1px solid rgba(0,0,0,0.05); padding-bottom: 10px; }
+        .box-style { background: #f9f9f9; padding: 20px; border-radius: 8px; margin-top: 20px; text-align: left; border: 1px solid #eee; }
+        .account-item { margin-bottom: 15px; border-bottom: 1px solid #eee; padding-bottom: 10px; }
         .account-item:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
         .account-info { display: flex; justify-content: space-between; align-items: center; margin-top: 5px; }
         
         .btn-group { display: flex; gap: 5px; }
         .small-btn { padding: 6px 12px; background: var(--accent-color); color: #fff; border: none; border-radius: 4px; font-size: 12px; cursor: pointer; text-decoration: none; display: inline-block; }
-        .phone-btn { background: #8e9775; } 
+        .phone-btn { background: #5cb85c; } 
         
         .share-btn { background: #fee500; color: #3c1e1e; font-weight: bold; width: 100%; margin-top: 10px; height: 45px; font-size: 14px; border-radius: 8px; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; }
-        .flower-btn { background: #fff; color: #333; border: 1px solid #ddd; width: 100%; margin-top: 10px; height: 45px; font-size: 14px; border-radius: 8px; cursor: pointer; text-decoration: none; display: flex; align-items: center; justify-content: center; gap: 8px; }
+        .flower-btn { background: var(--white); color: #333; border: 1px solid #ddd; width: 100%; margin-top: 10px; height: 45px; font-size: 14px; border-radius: 8px; cursor: pointer; text-decoration: none; display: flex; align-items: center; justify-content: center; gap: 8px; }
 
-        /* Map Image View */
-        .map-container { width: 100%; height: auto; margin: 20px 0; border-radius: 8px; overflow: hidden; border: 1px solid rgba(0,0,0,0.1); cursor: pointer; position: relative; }
+        .map-container { width: 100%; height: auto; margin: 20px 0; border-radius: 8px; overflow: hidden; border: 1px solid #eee; cursor: pointer; position: relative; }
         .map-container img { width: 100%; display: block; }
         .map-overlay-btn { position: absolute; bottom: 15px; left: 50%; transform: translateX(-50%); background: #03c75a; color: #fff; padding: 8px 15px; border-radius: 4px; font-size: 12px; font-weight: bold; box-shadow: 0 2px 10px rgba(0,0,0,0.2); }
 
@@ -134,9 +129,9 @@ def generate_invitation_html(data, output_path="index.html"):
         .tmap-btn { background: #1a73e8; color: #fff; }
         
         .transport-item { text-align: left; margin-bottom: 25px; padding-left: 10px; border-left: 2px solid var(--accent-color); }
-        .transport-title { font-weight: bold; color: var(--text-color); font-size: 15px; margin-bottom: 5px; }
-        .transport-desc { font-size: 14px; color: #444; line-height: 1.6; }
-        .footer { padding: 40px; text-align: center; font-size: 12px; color: #777; background: rgba(0,0,0,0.02); }
+        .transport-title { font-weight: bold; color: var(--accent-color); font-size: 15px; margin-bottom: 5px; }
+        .transport-desc { font-size: 14px; color: #666; line-height: 1.6; }
+        .footer { padding: 40px; text-align: center; font-size: 12px; color: #aaa; background: #fafafa; }
     </style>
 </head>
 <body>
@@ -150,12 +145,12 @@ def generate_invitation_html(data, output_path="index.html"):
         </div>
 
         <div class="section greeting reveal">
-            <h2 style="font-weight: normal; letter-spacing: 2px;">{{greeting_title}}</h2>
+            <h2 style="color: var(--accent-color); font-weight: normal; letter-spacing: 2px;">{{greeting_title}}</h2>
             <p style="line-height: 2.2; white-space: pre-wrap; font-size: 15px;">{{greeting_message}}</p>
         </div>
 
         <div class="section reveal" style="padding: 60px 0;">
-            <h2 style="font-weight: normal; letter-spacing: 2px;">Wedding Gallery</h2>
+            <h2 style="color: var(--accent-color); font-weight: normal; letter-spacing: 2px;">Wedding Gallery</h2>
             <div class="swiper swiper-gallery">
                 <div class="swiper-wrapper" id="gallery-wrapper"></div>
                 <div class="swiper-button-next" style="color: var(--accent-color);"></div>
@@ -164,10 +159,10 @@ def generate_invitation_html(data, output_path="index.html"):
         </div>
 
         <div class="section venue reveal">
-            <h2 style="font-weight: normal; letter-spacing: 2px;">오시는 길</h2>
+            <h2 style="color: var(--accent-color); font-weight: normal; letter-spacing: 2px;">오시는 길</h2>
             <p style="margin-bottom: 5px;"><strong>노블발렌티 <span style="font-weight:bold;">대치점</span> {{hall_detail}}</strong></p>
             <p class="note-subtitle">*삼성점이 아니오니 유의 부탁드립니다.</p>
-            <p style="font-size: 14px; color: #444;">{{address}}</p>
+            <p style="font-size: 14px; color: #888;">{{address}}</p>
             
             <div class="map-container" onclick="window.open('https://map.naver.com/v5/search/%EB%85%B8%EB%B8%94%EB%B0%9C%EB%A0%8C%ED%8B%B0%20%EB%8C%80%EC%B9%98', '_blank')">
                 <img src="https://cdn.imweb.me/thumbnail/20251224/804939816d76a.jpg" alt="Map View">
@@ -188,7 +183,7 @@ def generate_invitation_html(data, output_path="index.html"):
         </div>
 
         <div class="section reveal">
-            <h2 style="font-weight: normal; letter-spacing: 2px;">마음 전하실 곳</h2>
+            <h2 style="color: var(--accent-color); font-weight: normal; letter-spacing: 2px;">마음 전하실 곳</h2>
             <div class="box-style">{{account_items_html}}</div>
             
             <div style="margin-top: 20px;">
@@ -253,14 +248,12 @@ def generate_invitation_html(data, output_path="index.html"):
             navigation: { nextEl: '.swiper-button-next', prevEl: '.swiper-button-prev' } 
         });
         
-        // 3. Lightbox Swiper with iOS bug fixes
         const lightboxSwiper = new Swiper('.swiper-lightbox', { 
             slidesPerView: 1, 
             spaceBetween: 0, 
             loop: true,
             observer: true,
             observeParents: true,
-            watchOverflow: true,
             navigation: { nextEl: '.swiper-button-next', prevEl: '.swiper-button-prev' },
             preventClicks: false,
             preventClicksPropagation: false,
@@ -284,7 +277,7 @@ def generate_invitation_html(data, output_path="index.html"):
         
         function copyToClipboard(text) { navigator.clipboard.writeText(text).then(() => alert('계좌번호가 복사되었습니다.')); }
 
-        // 4. Kakao Share
+        // Kakao Share
         Kakao.init('7e2f0606066060606060606060606060'); 
         function shareKakao() {
             if (!Kakao.isInitialized()) { alert('카카오톡 공유 기능을 준비 중입니다.'); return; }
@@ -305,7 +298,7 @@ def generate_invitation_html(data, output_path="index.html"):
 """
     account_html = ""
     for acc in data['accounts']:
-        account_html += f"""<div class="account-item"><strong>{acc['owner']}</strong><div class="account-info"><small style="color:#444;">{acc['bank']} {acc['number']}</small><div class="btn-group"><a href="tel:{acc['phone']}" class="small-btn phone-btn">전화</a><button class="small-btn" onclick="copyToClipboard('{acc['number'].replace("-", "")}')">복사</button></div></div></div>"""
+        account_html += f"""<div class="account-item"><strong>{acc['owner']}</strong><div class="account-info"><small style="color:#666;">{acc['bank']} {acc['number']}</small><div class="btn-group"><a href="tel:{acc['phone']}" class="small-btn phone-btn">전화</a><button class="small-btn" onclick="copyToClipboard('{acc['number'].replace("-", "")}')">복사</button></div></div></div>"""
 
     html_content = template_text
     html_content = html_content.replace("{{groom_name}}", data['groom_name']).replace("{{bride_name}}", data['bride_name'])
@@ -318,7 +311,7 @@ def generate_invitation_html(data, output_path="index.html"):
 
     with open(output_path, "w", encoding="utf-8") as f:
         f.write(html_content)
-    print(f"Refined invitation updated and generated at: {os.path.abspath(output_path)}")
+    print(f"Colors reverted and generated at: {os.path.abspath(output_path)}")
 
 if __name__ == "__main__":
     generate_invitation_html(MY_DATA)

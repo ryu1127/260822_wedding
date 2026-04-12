@@ -42,8 +42,14 @@ for p in all_source_photos:
     })
 
 MY_DATA = {
-    "groom_name": "류동헌", "groom_phone": "010-2923-7726",
-    "bride_name": "황혜신", "bride_phone": "010-6334-6843",
+    "groom": {
+        "name": "류동헌", "phone": "010-2923-7726",
+        "father": "류부열", "mother": "김태옥"
+    },
+    "bride": {
+        "name": "황혜신", "phone": "010-6334-6843",
+        "father": "황애민", "mother": "안미옥"
+    },
     "wedding_date": "2026-08-22", "wedding_time": "12:30",
     "venue_name": "노블발렌티 대치점", "hall_detail": "B1 단독홀",
     "address": "서울특별시 강남구 영동대로 325 (S-Tower 지하 1층)",
@@ -72,6 +78,7 @@ def generate_invitation_html(data, output_path="index.html"):
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>{{groom_name}} ♥ {{bride_name}} 결혼합니다</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
+    <script src="https://t1.kakaocdn.net/kakao_js_sdk/2.7.0/kakao.min.js"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Gowun+Batang&display=swap');
         
@@ -88,7 +95,6 @@ def generate_invitation_html(data, output_path="index.html"):
         
         .section { padding: 60px 20px; text-align: center; border-bottom: 1px solid #f0f0f0; }
         
-        /* Repeatable Reveal Animation */
         .reveal { opacity: 0; transform: translateY(30px); transition: all 0.8s ease-out; }
         .reveal.active { opacity: 1; transform: translateY(0); }
 
@@ -105,7 +111,12 @@ def generate_invitation_html(data, output_path="index.html"):
 
         .names { font-size: 24px; margin-bottom: 10px; color: var(--accent-color); }
         .date-info { font-size: 16px; color: var(--gray-text); margin-bottom: 30px; }
-        .note-subtitle { font-size: 13px; color: var(--gray-text); margin-top: -10px; margin-bottom: 20px; }
+
+        /* Parents Info Style */
+        .family-info { margin: 20px 0; font-size: 16px; line-height: 1.8; }
+        .family-row { display: flex; align-items: center; justify-content: center; gap: 10px; margin-bottom: 10px; }
+        .family-relation { color: #888; font-size: 14px; }
+        .family-name { font-weight: bold; min-width: 60px; }
 
         .swiper-gallery { width: 100%; height: 480px; margin: 20px 0; }
         .swiper-slide-gallery { display: grid; grid-template-columns: repeat(2, 1fr); grid-template-rows: repeat(2, 1fr); gap: 10px; padding: 10px; box-sizing: border-box; }
@@ -124,15 +135,13 @@ def generate_invitation_html(data, output_path="index.html"):
         
         .btn-group { display: flex; gap: 5px; }
         .small-btn { padding: 6px 12px; background: var(--accent-color); color: #fff; border: none; border-radius: 4px; font-size: 12px; cursor: pointer; text-decoration: none; display: inline-block; }
-        .phone-btn { background: #5cb85c; } 
+        .phone-btn { background: #8e9775; display: inline-flex; align-items: center; justify-content: center; width: 24px; height: 24px; border-radius: 50%; padding: 0; } 
         
         .share-btn { background: var(--accent-color); color: #fff; font-weight: bold; width: 100%; margin-top: 10px; height: 45px; font-size: 14px; border-radius: 8px; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; }
         .flower-btn { background: var(--white); color: #333; border: 1px solid #ddd; width: 100%; margin-top: 10px; height: 45px; font-size: 14px; border-radius: 8px; cursor: pointer; text-decoration: none; display: flex; align-items: center; justify-content: center; gap: 8px; }
 
-        .map-container { width: 100%; height: auto; margin: 20px 0; border-radius: 8px; overflow: hidden; border: 1px solid #eee; cursor: pointer; position: relative; }
-        .map-container img { width: 100%; display: block; }
-        .map-overlay-btn { position: absolute; bottom: 15px; left: 50%; transform: translateX(-50%); background: #03c75a; color: #fff; padding: 8px 15px; border-radius: 4px; font-size: 12px; font-weight: bold; box-shadow: 0 2px 10px rgba(0,0,0,0.2); }
-
+        /* Naver Map Live View */
+        .map-wrapper { width: 100%; height: 300px; margin: 20px 0; border-radius: 8px; overflow: hidden; border: 1px solid #eee; }
         .map-btn-group { display: flex; gap: 8px; justify-content: center; margin-top: 10px; flex-wrap: wrap; }
         .map-btn { padding: 10px 12px; background: var(--accent-color); color: #fff; text-decoration: none; border-radius: 20px; font-size: 12px; min-width: 80px; text-align: center; }
         .kakao-btn { background: #fee500; color: #3c1e1e; }
@@ -152,7 +161,18 @@ def generate_invitation_html(data, output_path="index.html"):
         </div>
         
         <div class="section reveal">
-            <div class="names">{{groom_name}} & {{bride_name}}</div>
+            <div class="family-info">
+                <div class="family-row">
+                    <span class="family-name">{{groom_father}}</span> · <span class="family-name">{{groom_mother}}</span>
+                    <span class="family-relation">의 아들</span>
+                    <span class="family-name" style="color: var(--accent-color);">{{groom_name}}</span>
+                </div>
+                <div class="family-row">
+                    <span class="family-name">{{bride_father}}</span> · <span class="family-name">{{bride_mother}}</span>
+                    <span class="family-relation">의 딸</span>
+                    <span class="family-name" style="color: var(--accent-color);">{{bride_name}}</span>
+                </div>
+            </div>
             <div class="date-info">2026. 08. 22 토요일 12:30</div>
             <div>노블발렌티 <span style="font-weight:bold;">대치점</span> {{hall_detail}}</div>
         </div>
@@ -177,9 +197,9 @@ def generate_invitation_html(data, output_path="index.html"):
             <p class="note-subtitle">*삼성점이 아니오니 유의 부탁드립니다.</p>
             <p style="font-size: 14px; color: #888;">{{address}}</p>
             
-            <div class="map-container" onclick="window.open('https://map.naver.com/v5/search/%EB%85%B8%EB%B8%94%EB%B0%9C%EB%A0%8C%ED%8B%B0%20%EB%8C%80%EC%B9%98', '_blank')">
-                <img src="https://cdn.imweb.me/thumbnail/20251224/804939816d76a.jpg" alt="Map View">
-                <div class="map-overlay-btn">네이버 지도 앱 열기</div>
+            <!-- Real Naver Map View -->
+            <div class="map-wrapper">
+                <iframe src="https://map.naver.com/v5/search/%EB%85%B8%EB%B8%94%EB%B0%9C%EB%A0%8C%ED%8B%B0%20%EB%8C%80%EC%B9%98?is_sharing=true" width="100%" height="100%" style="border:0;" allowfullscreen="" loading="lazy"></iframe>
             </div>
 
             <div class="map-btn-group">
@@ -219,27 +239,23 @@ def generate_invitation_html(data, output_path="index.html"):
 
     <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
     <script>
-        // 1. D-Day Logic
         const weddingDate = new Date("2026-08-22").getTime();
         const now = new Date().getTime();
-        const distance = weddingDate - now;
-        const dDayCount = Math.ceil(distance / (1000 * 60 * 60 * 24));
+        const dDayCount = Math.ceil((weddingDate - now) / (1000 * 60 * 60 * 24));
         const dDayElement = document.getElementById('d-day-text');
         if (dDayCount > 0) dDayElement.innerText = `D-${dDayCount}`;
         else if (dDayCount === 0) dDayElement.innerText = `D-Day`;
         else dDayElement.style.display = 'none';
 
-        // 2. Repeatable Reveal on scroll
         const reveals = document.querySelectorAll('.reveal');
         const observer = new IntersectionObserver(entries => {
             entries.forEach(entry => {
                 if (entry.isIntersecting) entry.target.classList.add('active');
-                else entry.target.classList.remove('active'); // Repeats effect
+                else entry.target.classList.remove('active');
             });
         }, { threshold: 0.1 });
         reveals.forEach(r => observer.observe(r));
 
-        // 3. Photo Data
         const photoData = {{photo_data_json}};
         const galleryWrapper = document.getElementById('gallery-wrapper');
         const lightboxWrapper = document.getElementById('lightbox-wrapper');
@@ -266,52 +282,18 @@ def generate_invitation_html(data, output_path="index.html"):
             lightboxWrapper.appendChild(slide);
         });
 
-        const gallerySwiper = new Swiper('.swiper-gallery', { 
-            slidesPerView: 1, 
-            spaceBetween: 10, 
-            navigation: { nextEl: '.swiper-button-next', prevEl: '.swiper-button-prev' } 
-        });
-        
-        const lightboxSwiper = new Swiper('.swiper-lightbox', { 
-            slidesPerView: 1, 
-            spaceBetween: 0, 
-            loop: true,
-            observer: true,
-            observeParents: true,
-            navigation: { nextEl: '.swiper-button-next', prevEl: '.swiper-button-prev' },
-            preventClicks: false,
-            preventClicksPropagation: false,
-            touchStartPreventDefault: false
-        });
+        const gallerySwiper = new Swiper('.swiper-gallery', { slidesPerView: 1, spaceBetween: 10, navigation: { nextEl: '.swiper-button-next', prevEl: '.swiper-button-prev' } });
+        const lightboxSwiper = new Swiper('.swiper-lightbox', { slidesPerView: 1, spaceBetween: 0, loop: true, observer: true, observeParents: true, navigation: { nextEl: '.swiper-button-next', prevEl: '.swiper-button-prev' }, preventClicks: false, preventClicksPropagation: false, touchStartPreventDefault: false });
 
-        function openLightbox(idx) { 
-            const lb = document.getElementById('lightbox');
-            lb.style.display = 'flex'; 
-            lightboxSwiper.update();
-            setTimeout(() => {
-                lightboxSwiper.slideToLoop(idx, 0); 
-            }, 50);
-            document.body.style.overflow = 'hidden'; 
-        }
-        
-        function closeLightbox() { 
-            document.getElementById('lightbox').style.display = 'none'; 
-            document.body.style.overflow = 'auto'; 
-        }
-        
+        function openLightbox(idx) { document.getElementById('lightbox').style.display = 'flex'; lightboxSwiper.update(); setTimeout(() => { lightboxSwiper.slideToLoop(idx, 0); }, 50); document.body.style.overflow = 'hidden'; }
+        function closeLightbox() { document.getElementById('lightbox').style.display = 'none'; document.body.style.overflow = 'auto'; }
         function copyToClipboard(text) { navigator.clipboard.writeText(text).then(() => alert('계좌번호가 복사되었습니다.')); }
 
         function shareInvitation() {
             if (navigator.share) {
-                navigator.share({
-                    title: '{{groom_name}} ♥ {{bride_name}} 결혼합니다',
-                    text: '저희 두사람의 결혼식에 소중한 분들을 초대합니다.',
-                    url: window.location.href,
-                }).catch(console.error);
+                navigator.share({ title: '{{groom_name}} ♥ {{bride_name}} 결혼합니다', text: '저희 두사람의 결혼식에 소중한 분들을 초대합니다.', url: window.location.href }).catch(console.error);
             } else {
-                navigator.clipboard.writeText(window.location.href).then(() => {
-                    alert('청첩장 링크가 복사되었습니다. 카카오톡 등 원하는 곳에 붙여넣어 공유해 주세요!');
-                });
+                navigator.clipboard.writeText(window.location.href).then(() => { alert('청첩장 링크가 복사되었습니다.'); });
             }
         }
     </script>
@@ -320,10 +302,12 @@ def generate_invitation_html(data, output_path="index.html"):
 """
     account_html = ""
     for acc in data['accounts']:
-        account_html += f"""<div class="account-item"><strong>{acc['owner']}</strong><div class="account-info"><small style="color:#666;">{acc['bank']} {acc['number']}</small><div class="btn-group"><a href="tel:{acc['phone']}" class="small-btn phone-btn">전화</a><button class="small-btn" onclick="copyToClipboard('{acc['number'].replace("-", "")}')">복사</button></div></div></div>"""
+        account_html += f"""<div class="account-item"><strong>{acc['owner']}</strong><div class="account-info"><small style="color:#666;">{acc['bank']} {acc['number']}</small><div class="btn-group"><a href="tel:{acc['phone']}" class="small-btn phone-btn">📞</a><button class="small-btn" onclick="copyToClipboard('{acc['number'].replace("-", "")}')">복사</button></div></div></div>"""
 
     html_content = template_text
-    html_content = html_content.replace("{{groom_name}}", data['groom_name']).replace("{{bride_name}}", data['bride_name'])
+    html_content = html_content.replace("{{groom_name}}", data['groom']['name']).replace("{{bride_name}}", data['bride']['name'])
+    html_content = html_content.replace("{{groom_father}}", data['groom']['father']).replace("{{groom_mother}}", data['groom']['mother'])
+    html_content = html_content.replace("{{bride_father}}", data['bride']['father']).replace("{{bride_mother}}", data['bride']['mother'])
     html_content = html_content.replace("{{hall_detail}}", data['hall_detail']).replace("{{address}}", data['address'])
     html_content = html_content.replace("{{greeting_title}}", data['greeting_title']).replace("{{greeting_message}}", data['greeting_message'])
     html_content = html_content.replace("{{cover_photo}}", cover_photo)
@@ -333,7 +317,7 @@ def generate_invitation_html(data, output_path="index.html"):
 
     with open(output_path, "w", encoding="utf-8") as f:
         f.write(html_content)
-    print(f"Refined invitation with repeatable effects and D-Day badge generated at: {os.path.abspath(output_path)}")
+    print(f"Refined invitation with parents info and interactive map generated at: {os.path.abspath(output_path)}")
 
 if __name__ == "__main__":
     generate_invitation_html(MY_DATA)

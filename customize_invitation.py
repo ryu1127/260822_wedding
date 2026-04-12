@@ -41,22 +41,22 @@ for p in all_source_photos:
     })
 
 MY_DATA = {
-    "groom_name": "류동헌", "bride_name": "황혜신",
+    "groom_name": "류동헌", "groom_phone": "010-2923-7726",
+    "bride_name": "황혜신", "bride_phone": "010-6334-6843",
     "wedding_date": "2026-08-22", "wedding_time": "12:30",
     "venue_name": "노블발렌티 대치점", "hall_detail": "B1 단독홀",
     "address": "서울특별시 강남구 영동대로 325 (S-Tower 지하 1층)",
     "greeting_title": "우리, 결혼합니다",
     "greeting_message": "저희 두사람의 작은 만남이\n사랑의 결실을 이루어\n결혼식을 올리게 되었습니다.\n\n평생 서로를 귀하게 여기며 첫 마음\n그대로 존중하고 배려하며 살겠습니다.",
     "photos": photo_data,
-    "map_image_url": "https://cdn.imweb.me/thumbnail/20251224/804939816d76a.jpg",
     "transportation": {
         "subway": "2호선 삼성역 3번 출구 (셔틀버스 수시 운행)<br>3호선 학여울역 1번 출구 (도보 10분)",
         "bus": "휘문고교 사거리 정류장 하차<br>간선: 343, 401 / 지선: 4319 / 마을: 강남01, 강남06",
         "parking": "S-Tower 건물 내 지하 주차장 (하객 2시간 무료)"
     },
     "accounts": [
-        {"owner": "신랑 류동헌", "bank": "토스뱅크", "number": "1000-1013-9845"},
-        {"owner": "신부 황혜신", "bank": "토스뱅크", "number": "1000-2458-9041"}
+        {"owner": "신랑 류동헌", "bank": "토스뱅크", "number": "1000-1013-9845", "phone": "010-2923-7726"},
+        {"owner": "신부 황혜신", "bank": "토스뱅크", "number": "1000-2458-9041", "phone": "010-6334-6843"}
     ]
 }
 
@@ -92,8 +92,12 @@ def generate_invitation_html(data, output_path="index.html"):
         #lightbox .close { position: absolute; top: 30px; right: 20px; color: #fff; font-size: 40px; cursor: pointer; z-index: 2100; padding: 10px; line-height: 1; }
 
         .box-style { background: #f9f9f9; padding: 20px; border-radius: 8px; margin-top: 20px; text-align: left; border: 1px solid #eee; }
-        .account-item { margin-bottom: 15px; border-bottom: 1px solid #eee; padding-bottom: 10px; display: flex; justify-content: space-between; align-items: center; }
-        .copy-btn { padding: 5px 10px; background: #bd7d1e; color: #fff; border: none; border-radius: 4px; font-size: 12px; cursor: pointer; }
+        .account-item { margin-bottom: 15px; border-bottom: 1px solid #eee; padding-bottom: 10px; }
+        .account-item:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
+        .account-info { display: flex; justify-content: space-between; align-items: center; margin-top: 5px; }
+        .btn-group { display: flex; gap: 5px; }
+        .small-btn { padding: 4px 8px; background: #bd7d1e; color: #fff; border: none; border-radius: 4px; font-size: 11px; cursor: pointer; text-decoration: none; }
+        .phone-btn { background: #5cb85c; }
 
         .guestbook-input { width: 100%; margin-bottom: 10px; padding: 10px; border: 1px solid #ddd; border-radius: 4px; box-sizing: border-box; font-family: inherit; }
         .guestbook-list { margin-top: 20px; text-align: left; }
@@ -105,8 +109,16 @@ def generate_invitation_html(data, output_path="index.html"):
         .page-btn { padding: 5px 12px; border: 1px solid #bd7d1e; background: #fff; color: #bd7d1e; border-radius: 4px; cursor: pointer; font-size: 13px; }
         .page-btn:disabled { border-color: #ddd; color: #ccc; cursor: default; }
 
-        .map-wrapper { margin: 20px 0; border: 1px solid #eee; border-radius: 8px; overflow: hidden; }
-        .map-wrapper img { width: 100%; display: block; }
+        /* Map Area */
+        .live-map-area { 
+            width: 100%; height: 200px; background: #eee; border-radius: 8px; margin: 20px 0; 
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+            cursor: pointer; border: 1px solid #ddd; background-image: url('https://www.ncloud.com/static/images/service/service_map_01.png');
+            background-size: cover; background-position: center; position: relative;
+        }
+        .live-map-area::before { content: ""; position: absolute; top:0; left:0; width:100%; height:100%; background: rgba(255,255,255,0.7); }
+        .live-map-text { position: relative; color: #333; font-weight: bold; z-index: 1; }
+
         .map-btn-group { display: flex; gap: 8px; justify-content: center; margin-top: 10px; flex-wrap: wrap; }
         .map-btn { padding: 10px 12px; background: #bd7d1e; color: #fff; text-decoration: none; border-radius: 20px; font-size: 12px; min-width: 80px; text-align: center; }
         .kakao-btn { background: #fee500; color: #3c1e1e; }
@@ -146,7 +158,11 @@ def generate_invitation_html(data, output_path="index.html"):
             <p style="margin-bottom: 5px;"><strong>노블발렌티 <span style="font-weight:bold;">대치점</span> {{hall_detail}}</strong></p>
             <p class="note-subtitle">*삼성점이 아니오니 유의 부탁드립니다.</p>
             <p style="font-size: 14px; color: #888;">{{address}}</p>
-            <div class="map-wrapper"><img src="{{map_image_url}}" alt="Map"></div>
+            
+            <div class="live-map-area" onclick="window.open('https://map.naver.com/v5/search/%EB%85%B8%EB%B8%94%EB%B0%9C%EB%A0%8C%ED%8B%B0%20%EB%8C%80%EC%B9%98', '_blank')">
+                <div class="live-map-text">📍 네이버 지도로 위치 보기 (클릭)</div>
+            </div>
+
             <div class="map-btn-group">
                 <a href="https://surl.tmap.co.kr/6866666c" target="_blank" class="map-btn tmap-btn">티맵</a>
                 <a href="https://map.naver.com/v5/search/%EB%85%B8%EB%B8%94%EB%B0%9C%EB%A0%8C%ED%8B%B0%20%EB%8C%80%EC%B9%98" target="_blank" class="map-btn">네이버 지도</a>
@@ -169,7 +185,7 @@ def generate_invitation_html(data, output_path="index.html"):
             <div class="box-style">
                 <input type="text" id="gb-name" class="guestbook-input" placeholder="성함을 입력해주세요">
                 <textarea id="gb-msg" class="guestbook-input" placeholder="축하 메시지를 남겨주세요" rows="3"></textarea>
-                <button class="copy-btn" style="width: 100%; height: 40px; font-size: 14px;" onclick="addGuestbook()">메시지 남기기</button>
+                <button class="small-btn" style="width: 100%; height: 40px; font-size: 14px;" onclick="addGuestbook()">메시지 남기기</button>
                 <div id="gb-list" class="guestbook-list"></div>
                 <div class="pagination" id="pagination"></div>
             </div>
@@ -215,29 +231,11 @@ def generate_invitation_html(data, output_path="index.html"):
             lightboxWrapper.appendChild(slide);
         });
 
-        const gallerySwiper = new Swiper('.swiper-gallery', { 
-            slidesPerView: 1, 
-            spaceBetween: 10, 
-            navigation: { nextEl: '.swiper-button-next', prevEl: '.swiper-button-prev' } 
-        });
-        
-        const lightboxSwiper = new Swiper('.swiper-lightbox', { 
-            slidesPerView: 1, 
-            spaceBetween: 0, 
-            loop: true,
-            navigation: { nextEl: '.swiper-button-next', prevEl: '.swiper-button-prev' } 
-        });
+        const gallerySwiper = new Swiper('.swiper-gallery', { slidesPerView: 1, spaceBetween: 10, navigation: { nextEl: '.swiper-button-next', prevEl: '.swiper-button-prev' } });
+        const lightboxSwiper = new Swiper('.swiper-lightbox', { slidesPerView: 1, spaceBetween: 0, loop: true, navigation: { nextEl: '.swiper-button-next', prevEl: '.swiper-button-prev' } });
 
-        function openLightbox(idx) { 
-            document.getElementById('lightbox').style.display = 'flex'; 
-            lightboxSwiper.update();
-            lightboxSwiper.slideToLoop(idx, 0); 
-            document.body.style.overflow = 'hidden'; 
-        }
-        function closeLightbox() { 
-            document.getElementById('lightbox').style.display = 'none'; 
-            document.body.style.overflow = 'auto'; 
-        }
+        function openLightbox(idx) { document.getElementById('lightbox').style.display = 'flex'; lightboxSwiper.update(); lightboxSwiper.slideToLoop(idx, 0); document.body.style.overflow = 'hidden'; }
+        function closeLightbox() { document.getElementById('lightbox').style.display = 'none'; document.body.style.overflow = 'auto'; }
         function copyToClipboard(text) { navigator.clipboard.writeText(text).then(() => alert('계좌번호가 복사되었습니다.')); }
 
         let currentPage = 1; const pageSize = 5;
@@ -270,21 +268,35 @@ def generate_invitation_html(data, output_path="index.html"):
 </body>
 </html>
 """
-    account_html = "".join([f'<div class="account-item"><div><strong>{a["owner"]}</strong><br><small style="color:#666;">{a["bank"]} {a["number"]}</small></div><button class="copy-btn" onclick="copyToClipboard(\'{a["number"].replace("-", "")}\')">복사</button></div>' for a in data['accounts']])
-    
+    # Generate Account & Phone HTML
+    account_html = ""
+    for acc in data['accounts']:
+        account_html += f"""
+        <div class="account-item">
+            <strong>{acc['owner']}</strong>
+            <div class="account-info">
+                <small style="color:#666;">{acc['bank']} {acc['number']}</small>
+                <div class="btn-group">
+                    <a href="tel:{acc['phone']}" class="small-btn phone-btn">전화</a>
+                    <button class="small-btn" onclick="copyToClipboard('{acc['number'].replace("-", "")}')">복사</button>
+                </div>
+            </div>
+        </div>"""
+
+    # Manual replacement for safety
     html_content = template_text
     html_content = html_content.replace("{{groom_name}}", data['groom_name']).replace("{{bride_name}}", data['bride_name'])
     html_content = html_content.replace("{{wedding_date}}", data['wedding_date']).replace("{{wedding_time}}", data['wedding_time'])
     html_content = html_content.replace("{{hall_detail}}", data['hall_detail']).replace("{{address}}", data['address'])
     html_content = html_content.replace("{{greeting_title}}", data['greeting_title']).replace("{{greeting_message}}", data['greeting_message'])
-    html_content = html_content.replace("{{cover_photo}}", cover_photo).replace("{{map_image_url}}", data['map_image_url'])
+    html_content = html_content.replace("{{cover_photo}}", cover_photo)
     html_content = html_content.replace("{{subway}}", data['transportation']['subway']).replace("{{bus}}", data['transportation']['bus']).replace("{{parking}}", data['transportation']['parking'])
     html_content = html_content.replace("{{wedding_year}}", data['wedding_date'].split('-')[0]).replace("{{account_items_html}}", account_html)
     html_content = html_content.replace("{{photo_data_json}}", json.dumps(data['photos']))
 
     with open(output_path, "w", encoding="utf-8") as f:
         f.write(html_content)
-    print(f"Updated invitation with Tmap generated at: {os.path.abspath(output_path)}")
+    print(f"Final refined invitation generated at: {os.path.abspath(output_path)}")
 
 if __name__ == "__main__":
     generate_invitation_html(MY_DATA)

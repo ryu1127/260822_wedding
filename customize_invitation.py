@@ -72,7 +72,6 @@ def generate_invitation_html(data, output_path="index.html"):
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>{{groom_name}} ♥ {{bride_name}} 결혼합니다</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
-    <script src="https://t1.kakaocdn.net/kakao_js_sdk/2.7.0/kakao.min.js"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Gowun+Batang&display=swap');
         
@@ -114,9 +113,9 @@ def generate_invitation_html(data, output_path="index.html"):
         
         .btn-group { display: flex; gap: 5px; }
         .small-btn { padding: 6px 12px; background: var(--accent-color); color: #fff; border: none; border-radius: 4px; font-size: 12px; cursor: pointer; text-decoration: none; display: inline-block; }
-        .phone-btn { background: #5cb85c; } 
+        .phone-btn { background: #8e9775; } 
         
-        .share-btn { background: #fee500; color: #3c1e1e; font-weight: bold; width: 100%; margin-top: 10px; height: 45px; font-size: 14px; border-radius: 8px; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; }
+        .share-btn { background: var(--accent-color); color: #fff; font-weight: bold; width: 100%; margin-top: 10px; height: 45px; font-size: 14px; border-radius: 8px; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; }
         .flower-btn { background: var(--white); color: #333; border: 1px solid #ddd; width: 100%; margin-top: 10px; height: 45px; font-size: 14px; border-radius: 8px; cursor: pointer; text-decoration: none; display: flex; align-items: center; justify-content: center; gap: 8px; }
 
         .map-container { width: 100%; height: auto; margin: 20px 0; border-radius: 8px; overflow: hidden; border: 1px solid #eee; cursor: pointer; position: relative; }
@@ -188,7 +187,7 @@ def generate_invitation_html(data, output_path="index.html"):
             
             <div style="margin-top: 20px;">
                 <a href="https://m.99flower.co.kr/" target="_blank" class="flower-btn">🌸 축하 화환 보내기</a>
-                <button class="share-btn" onclick="shareKakao()">💬 카카오톡 공유하기</button>
+                <button class="share-btn" onclick="shareInvitation()">🔗 모바일 청첩장 링크 공유하기</button>
             </div>
         </div>
 
@@ -277,20 +276,20 @@ def generate_invitation_html(data, output_path="index.html"):
         
         function copyToClipboard(text) { navigator.clipboard.writeText(text).then(() => alert('계좌번호가 복사되었습니다.')); }
 
-        // Kakao Share
-        Kakao.init('7e2f0606066060606060606060606060'); 
-        function shareKakao() {
-            if (!Kakao.isInitialized()) { alert('카카오톡 공유 기능을 준비 중입니다.'); return; }
-            Kakao.Share.sendDefault({
-                objectType: 'feed',
-                content: {
+        // 3. Native Link Share
+        function shareInvitation() {
+            if (navigator.share) {
+                navigator.share({
                     title: '{{groom_name}} ♥ {{bride_name}} 결혼합니다',
-                    description: '2026. 08. 22 12:30 노블발렌티 대치점',
-                    imageUrl: window.location.origin + '/{{cover_photo}}',
-                    link: { mobileWebUrl: window.location.href, webUrl: window.location.href },
-                },
-                buttons: [{ title: '청첩장 보기', link: { mobileWebUrl: window.location.href, webUrl: window.location.href } }]
-            });
+                    text: '저희 두사람의 결혼식에 소중한 분들을 초대합니다.',
+                    url: window.location.href,
+                }).catch(console.error);
+            } else {
+                // Fallback: Copy to clipboard
+                navigator.clipboard.writeText(window.location.href).then(() => {
+                    alert('청첩장 링크가 복사되었습니다. 카카오톡 등 원하는 곳에 붙여넣어 공유해 주세요!');
+                });
+            }
         }
     </script>
 </body>
@@ -311,7 +310,7 @@ def generate_invitation_html(data, output_path="index.html"):
 
     with open(output_path, "w", encoding="utf-8") as f:
         f.write(html_content)
-    print(f"Colors reverted and generated at: {os.path.abspath(output_path)}")
+    print(f"Refined invitation updated and generated at: {os.path.abspath(output_path)}")
 
 if __name__ == "__main__":
     generate_invitation_html(MY_DATA)

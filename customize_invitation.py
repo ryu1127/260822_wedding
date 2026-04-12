@@ -76,53 +76,58 @@ def generate_invitation_html(data, output_path="index.html"):
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Gowun+Batang&display=swap');
         
-        /* Theme Settings */
         :root {
-            --bg-color: #e2d5dd;
+            --bg-color: #fefcf3;
+            --point-pink: #e2d5dd;
             --text-color: #000000;
-            --accent-color: #a68ba5; /* Slightly darker mauve for buttons */
-            --white: #ffffff;
+            --accent-color: #a68ba5;
         }
 
         body { font-family: 'Gowun Batang', serif; margin: 0; padding: 0; background-color: var(--bg-color); color: var(--text-color); display: flex; justify-content: center; }
         .container { max-width: 480px; width: 100%; background: var(--bg-color); overflow-x: hidden; position: relative; }
         
-        /* Reveal Animation */
+        /* Subtle Gradient Points */
+        .section { padding: 60px 20px; text-align: center; border-bottom: 1px solid rgba(0,0,0,0.03); position: relative; }
+        .section:nth-child(even) { background: linear-gradient(180deg, var(--bg-color) 0%, #f9f4f6 100%); }
+
         .reveal { opacity: 0; transform: translateY(30px); transition: all 1s ease-out; }
         .reveal.active { opacity: 1; transform: translateY(0); }
 
-        .section { padding: 60px 20px; text-align: center; border-bottom: 1px solid rgba(0,0,0,0.05); }
         .main-photo img { width: 100%; display: block; }
         .names { font-size: 24px; margin-bottom: 10px; color: var(--text-color); font-weight: bold; }
         .date-info { font-size: 16px; color: #555; margin-bottom: 30px; }
-        .note-subtitle { font-size: 13px; color: #666; margin-top: -10px; margin-bottom: 20px; }
+        .note-subtitle { font-size: 13px; color: #888; margin-top: -10px; margin-bottom: 20px; }
 
+        /* Gallery */
         .swiper-gallery { width: 100%; height: 480px; margin: 20px 0; }
         .swiper-slide-gallery { display: grid; grid-template-columns: repeat(2, 1fr); grid-template-rows: repeat(2, 1fr); gap: 10px; padding: 10px; box-sizing: border-box; }
         .swiper-slide-gallery img { width: 100%; height: 100%; object-fit: cover; border-radius: 4px; cursor: pointer; aspect-ratio: 1/1; }
         
-        #lightbox { display: none; position: fixed; top:0; left:0; width:100%; height:100%; background: rgba(0,0,0,0.95); z-index: 2000; flex-direction: column; justify-content: center; align-items: center; }
+        /* Lightbox - iPhone Fixes */
+        #lightbox { display: none; position: fixed; top:0; left:0; width:100%; height:100%; background: rgba(0,0,0,0.98); z-index: 2000; flex-direction: column; justify-content: center; align-items: center; }
         .swiper-lightbox { width: 100%; height: 100%; }
         .swiper-slide-lightbox { display: flex; justify-content: center; align-items: center; width: 100%; height: 100%; }
-        .swiper-slide-lightbox img { max-width: 100%; max-height: 90vh; object-fit: contain; display: block; }
-        #lightbox .close { position: absolute; top: 30px; right: 20px; color: #fff; font-size: 40px; cursor: pointer; z-index: 2100; padding: 10px; line-height: 1; }
+        .swiper-slide-lightbox img { max-width: 100%; max-height: 90vh; object-fit: contain; pointer-events: none; }
+        #lightbox .close { position: absolute; top: 30px; right: 20px; color: #fff; font-size: 45px; cursor: pointer; z-index: 2100; padding: 10px; line-height: 1; text-shadow: 0 0 10px rgba(0,0,0,0.5); }
 
-        /* Box Styles */
-        .box-style { background: rgba(255, 255, 255, 0.4); padding: 20px; border-radius: 12px; margin-top: 20px; text-align: left; border: 1px solid rgba(255,255,255,0.5); }
+        /* Box Styles with subtle pink */
+        .box-style { background: var(--point-pink); padding: 20px; border-radius: 12px; margin-top: 20px; text-align: left; border: 1px solid rgba(255,255,255,0.3); opacity: 0.8; }
         .account-item { margin-bottom: 15px; border-bottom: 1px solid rgba(0,0,0,0.05); padding-bottom: 10px; }
         .account-item:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
         .account-info { display: flex; justify-content: space-between; align-items: center; margin-top: 5px; }
         
         .btn-group { display: flex; gap: 5px; }
         .small-btn { padding: 6px 12px; background: var(--accent-color); color: #fff; border: none; border-radius: 4px; font-size: 12px; cursor: pointer; text-decoration: none; display: inline-block; }
-        .phone-btn { background: #8e9775; } /* Subdued olive green */
+        .phone-btn { background: #8e9775; } 
         
         .share-btn { background: #fee500; color: #3c1e1e; font-weight: bold; width: 100%; margin-top: 10px; height: 45px; font-size: 14px; border-radius: 8px; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; }
-        .flower-btn { background: var(--white); color: #333; border: 1px solid #ddd; width: 100%; margin-top: 10px; height: 45px; font-size: 14px; border-radius: 8px; cursor: pointer; text-decoration: none; display: flex; align-items: center; justify-content: center; gap: 8px; }
+        .flower-btn { background: #fff; color: #333; border: 1px solid #ddd; width: 100%; margin-top: 10px; height: 45px; font-size: 14px; border-radius: 8px; cursor: pointer; text-decoration: none; display: flex; align-items: center; justify-content: center; gap: 8px; }
 
-        /* Map Embed */
-        .map-container { width: 100%; height: 300px; margin: 20px 0; border-radius: 8px; overflow: hidden; border: 1px solid rgba(0,0,0,0.1); background: #eee; }
-        
+        /* Map Image View */
+        .map-container { width: 100%; height: auto; margin: 20px 0; border-radius: 8px; overflow: hidden; border: 1px solid rgba(0,0,0,0.1); cursor: pointer; position: relative; }
+        .map-container img { width: 100%; display: block; }
+        .map-overlay-btn { position: absolute; bottom: 15px; left: 50%; transform: translateX(-50%); background: #03c75a; color: #fff; padding: 8px 15px; border-radius: 4px; font-size: 12px; font-weight: bold; box-shadow: 0 2px 10px rgba(0,0,0,0.2); }
+
         .map-btn-group { display: flex; gap: 8px; justify-content: center; margin-top: 10px; flex-wrap: wrap; }
         .map-btn { padding: 10px 12px; background: var(--accent-color); color: #fff; text-decoration: none; border-radius: 20px; font-size: 12px; min-width: 80px; text-align: center; }
         .kakao-btn { background: #fee500; color: #3c1e1e; }
@@ -136,7 +141,7 @@ def generate_invitation_html(data, output_path="index.html"):
 </head>
 <body>
     <div class="container">
-        <div class="main-photo"><img src="{{cover_photo}}" alt="Cover"></div>
+        <div class="main-photo reveal"><img src="{{cover_photo}}" alt="Cover"></div>
         
         <div class="section reveal">
             <div class="names">{{groom_name}} & {{bride_name}}</div>
@@ -164,8 +169,10 @@ def generate_invitation_html(data, output_path="index.html"):
             <p class="note-subtitle">*삼성점이 아니오니 유의 부탁드립니다.</p>
             <p style="font-size: 14px; color: #444;">{{address}}</p>
             
-            <!-- Kakao Map Embed -->
-            <div class="map-container" id="kakao-map"></div>
+            <div class="map-container" onclick="window.open('https://map.naver.com/v5/search/%EB%85%B8%EB%B8%94%EB%B0%9C%EB%A0%8C%ED%8B%B0%20%EB%8C%80%EC%B9%98', '_blank')">
+                <img src="https://cdn.imweb.me/thumbnail/20251224/804939816d76a.jpg" alt="Map View">
+                <div class="map-overlay-btn">네이버 지도 앱 열기</div>
+            </div>
 
             <div class="map-btn-group">
                 <a href="https://surl.tmap.co.kr/6866666c" target="_blank" class="map-btn tmap-btn">티맵</a>
@@ -197,14 +204,12 @@ def generate_invitation_html(data, output_path="index.html"):
         <span class="close" onclick="closeLightbox()">&times;</span>
         <div class="swiper swiper-lightbox">
             <div class="swiper-wrapper" id="lightbox-wrapper"></div>
-            <div class="swiper-button-next" style="color: #fff;"></div>
-            <div class="swiper-button-prev" style="color: #fff;"></div>
+            <div class="swiper-button-next"></div>
+            <div class="swiper-button-prev"></div>
         </div>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
-    <!-- Kakao Map API -->
-    <script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=7e2f0606066060606060606060606060"></script>
     <script>
         // 1. Reveal on scroll
         const reveals = document.querySelectorAll('.reveal');
@@ -215,27 +220,7 @@ def generate_invitation_html(data, output_path="index.html"):
         }, { threshold: 0.1 });
         reveals.forEach(r => observer.observe(r));
 
-        // 2. Map Initialization
-        try {
-            const container = document.getElementById('kakao-map');
-            const options = {
-                center: new kakao.maps.LatLng(37.503300, 127.065455),
-                level: 3
-            };
-            const map = new kakao.maps.Map(container, options);
-            const markerPosition = new kakao.maps.LatLng(37.503300, 127.065455);
-            const marker = new kakao.maps.Marker({ position: markerPosition });
-            marker.setMap(map);
-            
-            const content = '<div style="padding:5px; font-size:12px; background:#fff; border:1px solid #ccc; border-radius:3px; color:#000;">노블발렌티 대치점</div>';
-            const infowindow = new kakao.maps.InfoWindow({ content: content });
-            infowindow.open(map, marker);
-        } catch(e) {
-            console.log("Map loading failed, showing placeholder.");
-            document.getElementById('kakao-map').innerHTML = '<div style="display:flex; justify-content:center; align-items:center; height:100%; color:#888;">지도를 불러올 수 없습니다.<br>하단 버튼을 이용해 주세요.</div>';
-        }
-
-        // 3. Gallery & Lightbox
+        // 2. Photo Data
         const photoData = {{photo_data_json}};
         const galleryWrapper = document.getElementById('gallery-wrapper');
         const lightboxWrapper = document.getElementById('lightbox-wrapper');
@@ -262,11 +247,41 @@ def generate_invitation_html(data, output_path="index.html"):
             lightboxWrapper.appendChild(slide);
         });
 
-        const gallerySwiper = new Swiper('.swiper-gallery', { slidesPerView: 1, spaceBetween: 10, navigation: { nextEl: '.swiper-button-next', prevEl: '.swiper-button-prev' } });
-        const lightboxSwiper = new Swiper('.swiper-lightbox', { slidesPerView: 1, spaceBetween: 0, loop: true, navigation: { nextEl: '.swiper-button-next', prevEl: '.swiper-button-prev' } });
+        const gallerySwiper = new Swiper('.swiper-gallery', { 
+            slidesPerView: 1, 
+            spaceBetween: 10, 
+            navigation: { nextEl: '.swiper-button-next', prevEl: '.swiper-button-prev' } 
+        });
+        
+        // 3. Lightbox Swiper with iOS bug fixes
+        const lightboxSwiper = new Swiper('.swiper-lightbox', { 
+            slidesPerView: 1, 
+            spaceBetween: 0, 
+            loop: true,
+            observer: true,
+            observeParents: true,
+            watchOverflow: true,
+            navigation: { nextEl: '.swiper-button-next', prevEl: '.swiper-button-prev' },
+            preventClicks: false,
+            preventClicksPropagation: false,
+            touchStartPreventDefault: false
+        });
 
-        function openLightbox(idx) { document.getElementById('lightbox').style.display = 'flex'; lightboxSwiper.update(); lightboxSwiper.slideToLoop(idx, 0); document.body.style.overflow = 'hidden'; }
-        function closeLightbox() { document.getElementById('lightbox').style.display = 'none'; document.body.style.overflow = 'auto'; }
+        function openLightbox(idx) { 
+            const lb = document.getElementById('lightbox');
+            lb.style.display = 'flex'; 
+            lightboxSwiper.update();
+            setTimeout(() => {
+                lightboxSwiper.slideToLoop(idx, 0); 
+            }, 50);
+            document.body.style.overflow = 'hidden'; 
+        }
+        
+        function closeLightbox() { 
+            document.getElementById('lightbox').style.display = 'none'; 
+            document.body.style.overflow = 'auto'; 
+        }
+        
         function copyToClipboard(text) { navigator.clipboard.writeText(text).then(() => alert('계좌번호가 복사되었습니다.')); }
 
         // 4. Kakao Share
@@ -303,7 +318,7 @@ def generate_invitation_html(data, output_path="index.html"):
 
     with open(output_path, "w", encoding="utf-8") as f:
         f.write(html_content)
-    print(f"Theme updated invitation generated at: {os.path.abspath(output_path)}")
+    print(f"Refined invitation updated and generated at: {os.path.abspath(output_path)}")
 
 if __name__ == "__main__":
     generate_invitation_html(MY_DATA)

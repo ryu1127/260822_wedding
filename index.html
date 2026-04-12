@@ -16,15 +16,17 @@
         .date-info { font-size: 16px; color: #888; margin-bottom: 30px; }
         .note-subtitle { font-size: 13px; color: #999; margin-top: -10px; margin-bottom: 20px; }
 
+        /* Gallery */
         .swiper-gallery { width: 100%; height: 480px; margin: 20px 0; }
         .swiper-slide-gallery { display: grid; grid-template-columns: repeat(2, 1fr); grid-template-rows: repeat(2, 1fr); gap: 10px; padding: 10px; box-sizing: border-box; }
         .swiper-slide-gallery img { width: 100%; height: 100%; object-fit: cover; border-radius: 4px; cursor: pointer; aspect-ratio: 1/1; }
         
-        #lightbox { display: none; position: fixed; top:0; left:0; width:100%; height:100%; background: rgba(0,0,0,0.9); z-index: 1000; flex-direction: column; justify-content: center; align-items: center; }
+        /* Lightbox - Fixed display issue */
+        #lightbox { display: none; position: fixed; top:0; left:0; width:100%; height:100%; background: rgba(0,0,0,0.95); z-index: 2000; flex-direction: column; justify-content: center; align-items: center; }
         .swiper-lightbox { width: 100%; height: 100%; }
-        .swiper-slide-lightbox { display: flex; justify-content: center; align-items: center; }
-        .swiper-slide-lightbox img { max-width: 100%; max-height: 100%; object-fit: contain; }
-        #lightbox .close { position: absolute; top: 20px; right: 20px; color: #fff; font-size: 40px; cursor: pointer; z-index: 1001; }
+        .swiper-slide-lightbox { display: flex; justify-content: center; align-items: center; width: 100%; height: 100%; }
+        .swiper-slide-lightbox img { max-width: 100%; max-height: 90vh; object-fit: contain; display: block; }
+        #lightbox .close { position: absolute; top: 30px; right: 20px; color: #fff; font-size: 40px; cursor: pointer; z-index: 2100; padding: 10px; line-height: 1; }
 
         .box-style { background: #f9f9f9; padding: 20px; border-radius: 8px; margin-top: 20px; text-align: left; border: 1px solid #eee; }
         .account-item { margin-bottom: 15px; border-bottom: 1px solid #eee; padding-bottom: 10px; display: flex; justify-content: space-between; align-items: center; }
@@ -39,7 +41,6 @@
         .pagination { display: flex; justify-content: center; align-items: center; gap: 15px; margin-top: 20px; }
         .page-btn { padding: 5px 12px; border: 1px solid #bd7d1e; background: #fff; color: #bd7d1e; border-radius: 4px; cursor: pointer; font-size: 13px; }
         .page-btn:disabled { border-color: #ddd; color: #ccc; cursor: default; }
-        .page-info { font-size: 13px; color: #666; }
 
         .map-wrapper { margin: 20px 0; border: 1px solid #eee; border-radius: 8px; overflow: hidden; }
         .map-wrapper img { width: 100%; display: block; }
@@ -51,9 +52,6 @@
         .transport-title { font-weight: bold; color: #bd7d1e; font-size: 15px; margin-bottom: 5px; }
         .transport-desc { font-size: 14px; color: #666; line-height: 1.6; }
         .footer { padding: 40px; text-align: center; font-size: 12px; color: #aaa; background: #fafafa; }
-        
-        /* Swiper Lazy Preloader Color */
-        .swiper-lazy-preloader { --swiper-preloader-color: #bd7d1e; }
     </style>
 </head>
 <body>
@@ -151,15 +149,9 @@
             const slide = document.createElement('div');
             slide.className = 'swiper-slide swiper-slide-lightbox';
             const img = document.createElement('img');
-            // Swiper Lazy Loading
-            img.setAttribute('data-src', photo.full);
-            img.className = 'swiper-lazy';
-            
-            const preloader = document.createElement('div');
-            preloader.className = 'swiper-lazy-preloader';
-            
+            img.src = photo.full; // Use standard src for reliability
+            img.loading = 'lazy';
             slide.appendChild(img);
-            slide.appendChild(preloader);
             lightboxWrapper.appendChild(slide);
         });
 
@@ -173,15 +165,12 @@
             slidesPerView: 1, 
             spaceBetween: 0, 
             loop: true,
-            lazy: {
-                loadPrevNext: true,
-                loadPrevNextAmount: 2
-            },
             navigation: { nextEl: '.swiper-button-next', prevEl: '.swiper-button-prev' } 
         });
 
         function openLightbox(idx) { 
             document.getElementById('lightbox').style.display = 'flex'; 
+            lightboxSwiper.update(); // Refresh swiper calculation
             lightboxSwiper.slideToLoop(idx, 0); 
             document.body.style.overflow = 'hidden'; 
         }

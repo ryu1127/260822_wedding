@@ -9,53 +9,43 @@ SOURCE_PHOTO_FOLDER = "/Users/dongheonryu/Downloads/0302/최종보정본"
 IMAGES_DIR = "images"
 THUMBNAILS_DIR = "thumbnails"
 
-# 폴더 생성
 for d in [IMAGES_DIR, THUMBNAILS_DIR]:
     if not os.path.exists(d):
         os.makedirs(d)
 
-# 자동으로 JPG 이미지 찾기
 all_source_photos = sorted(glob.glob(os.path.join(SOURCE_PHOTO_FOLDER, "*.jpg")))
 
 photo_data = []
-print("Optimizing photos for web and mobile...")
+print("Re-optimizing photos for better mobile compatibility...")
 
-MAX_FULL_SIZE = (2000, 2000)  # 원본 이미지 최대 크기 (모바일/웹 최적화)
-THUMB_SIZE = (400, 400)       # 썸네일 크기
+# 모바일 환경을 고려하여 해상도를 조금 더 줄임 (1200px이면 폰에서는 충분히 고화질입니다)
+MAX_FULL_SIZE = (1200, 1200) 
+THUMB_SIZE = (400, 400)
 
 for p in all_source_photos:
     filename = os.path.basename(p)
     dest_image_path = os.path.join(IMAGES_DIR, filename)
     thumb_path = os.path.join(THUMBNAILS_DIR, filename)
     
-    # 1. 원본 이미지 최적화 (Resize & Compress)
-    # 이미 존재하더라도 용량이 너무 크면 다시 처리하도록 함 (1MB 이상일 경우)
-    if not os.path.exists(dest_image_path) or os.path.getsize(dest_image_path) > 1024 * 1024:
-        with Image.open(p) as img:
-            img.thumbnail(MAX_FULL_SIZE)
-            img.save(dest_image_path, "JPEG", quality=80, optimize=True)
-            print(f"Optimized Full: {filename}")
-    
-    # 2. 썸네일 생성
+    # 무조건 다시 최적화하여 덮어쓰기 (용량과 해상도 확실히 줄임)
+    with Image.open(p) as img:
+        img.thumbnail(MAX_FULL_SIZE)
+        img.save(dest_image_path, "JPEG", quality=75, optimize=True)
+        
     if not os.path.exists(thumb_path):
         with Image.open(p) as img:
             img.thumbnail(THUMB_SIZE)
-            img.save(thumb_path, "JPEG", quality=80)
-            print(f"Thumbnail created: {filename}")
+            img.save(thumb_path, "JPEG", quality=75)
             
-    # 3. 상대 경로 저장
     photo_data.append({
         "full": f"images/{filename}",
         "thumb": f"thumbnails/{filename}"
     })
 
 MY_DATA = {
-    "groom_name": "류동헌",
-    "bride_name": "황혜신",
-    "wedding_date": "2026-08-22",
-    "wedding_time": "12:30",
-    "venue_name": "노블발렌티 대치점",
-    "hall_detail": "B1 단독홀",
+    "groom_name": "류동헌", "bride_name": "황혜신",
+    "wedding_date": "2026-08-22", "wedding_time": "12:30",
+    "venue_name": "노블발렌티 대치점", "hall_detail": "B1 단독홀",
     "address": "서울특별시 강남구 영동대로 325 (S-Tower 지하 1층)",
     "greeting_title": "우리, 결혼합니다",
     "greeting_message": "저희 두사람의 작은 만남이\n사랑의 결실을 이루어\n결혼식을 올리게 되었습니다.\n\n평생 서로를 귀하게 여기며 첫 마음\n그대로 존중하고 배려하며 살겠습니다.",
@@ -93,15 +83,17 @@ def generate_invitation_html(data, output_path="index.html"):
         .date-info { font-size: 16px; color: #888; margin-bottom: 30px; }
         .note-subtitle { font-size: 13px; color: #999; margin-top: -10px; margin-bottom: 20px; }
 
+        /* Gallery */
         .swiper-gallery { width: 100%; height: 480px; margin: 20px 0; }
         .swiper-slide-gallery { display: grid; grid-template-columns: repeat(2, 1fr); grid-template-rows: repeat(2, 1fr); gap: 10px; padding: 10px; box-sizing: border-box; }
         .swiper-slide-gallery img { width: 100%; height: 100%; object-fit: cover; border-radius: 4px; cursor: pointer; aspect-ratio: 1/1; }
         
-        #lightbox { display: none; position: fixed; top:0; left:0; width:100%; height:100%; background: rgba(0,0,0,0.9); z-index: 1000; flex-direction: column; justify-content: center; align-items: center; }
+        /* Lightbox - Fixed display issue */
+        #lightbox { display: none; position: fixed; top:0; left:0; width:100%; height:100%; background: rgba(0,0,0,0.95); z-index: 2000; flex-direction: column; justify-content: center; align-items: center; }
         .swiper-lightbox { width: 100%; height: 100%; }
-        .swiper-slide-lightbox { display: flex; justify-content: center; align-items: center; }
-        .swiper-slide-lightbox img { max-width: 100%; max-height: 100%; object-fit: contain; }
-        #lightbox .close { position: absolute; top: 20px; right: 20px; color: #fff; font-size: 40px; cursor: pointer; z-index: 1001; }
+        .swiper-slide-lightbox { display: flex; justify-content: center; align-items: center; width: 100%; height: 100%; }
+        .swiper-slide-lightbox img { max-width: 100%; max-height: 90vh; object-fit: contain; display: block; }
+        #lightbox .close { position: absolute; top: 30px; right: 20px; color: #fff; font-size: 40px; cursor: pointer; z-index: 2100; padding: 10px; line-height: 1; }
 
         .box-style { background: #f9f9f9; padding: 20px; border-radius: 8px; margin-top: 20px; text-align: left; border: 1px solid #eee; }
         .account-item { margin-bottom: 15px; border-bottom: 1px solid #eee; padding-bottom: 10px; display: flex; justify-content: space-between; align-items: center; }
@@ -116,7 +108,6 @@ def generate_invitation_html(data, output_path="index.html"):
         .pagination { display: flex; justify-content: center; align-items: center; gap: 15px; margin-top: 20px; }
         .page-btn { padding: 5px 12px; border: 1px solid #bd7d1e; background: #fff; color: #bd7d1e; border-radius: 4px; cursor: pointer; font-size: 13px; }
         .page-btn:disabled { border-color: #ddd; color: #ccc; cursor: default; }
-        .page-info { font-size: 13px; color: #666; }
 
         .map-wrapper { margin: 20px 0; border: 1px solid #eee; border-radius: 8px; overflow: hidden; }
         .map-wrapper img { width: 100%; display: block; }
@@ -128,9 +119,6 @@ def generate_invitation_html(data, output_path="index.html"):
         .transport-title { font-weight: bold; color: #bd7d1e; font-size: 15px; margin-bottom: 5px; }
         .transport-desc { font-size: 14px; color: #666; line-height: 1.6; }
         .footer { padding: 40px; text-align: center; font-size: 12px; color: #aaa; background: #fafafa; }
-        
-        /* Swiper Lazy Preloader Color */
-        .swiper-lazy-preloader { --swiper-preloader-color: #bd7d1e; }
     </style>
 </head>
 <body>
@@ -223,15 +211,9 @@ def generate_invitation_html(data, output_path="index.html"):
             const slide = document.createElement('div');
             slide.className = 'swiper-slide swiper-slide-lightbox';
             const img = document.createElement('img');
-            // Swiper Lazy Loading
-            img.setAttribute('data-src', photo.full);
-            img.className = 'swiper-lazy';
-            
-            const preloader = document.createElement('div');
-            preloader.className = 'swiper-lazy-preloader';
-            
+            img.src = photo.full; // Use standard src for reliability
+            img.loading = 'lazy';
             slide.appendChild(img);
-            slide.appendChild(preloader);
             lightboxWrapper.appendChild(slide);
         });
 
@@ -245,15 +227,12 @@ def generate_invitation_html(data, output_path="index.html"):
             slidesPerView: 1, 
             spaceBetween: 0, 
             loop: true,
-            lazy: {
-                loadPrevNext: true,
-                loadPrevNextAmount: 2
-            },
             navigation: { nextEl: '.swiper-button-next', prevEl: '.swiper-button-prev' } 
         });
 
         function openLightbox(idx) { 
             document.getElementById('lightbox').style.display = 'flex'; 
+            lightboxSwiper.update(); // Refresh swiper calculation
             lightboxSwiper.slideToLoop(idx, 0); 
             document.body.style.overflow = 'hidden'; 
         }
@@ -307,7 +286,7 @@ def generate_invitation_html(data, output_path="index.html"):
 
     with open(output_path, "w", encoding="utf-8") as f:
         f.write(html_content)
-    print(f"Optimized invitation generated at: {os.path.abspath(output_path)}")
+    print(f"Deployment-ready invitation generated at: {os.path.abspath(output_path)}")
 
 if __name__ == "__main__":
     generate_invitation_html(MY_DATA)

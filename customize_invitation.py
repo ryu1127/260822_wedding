@@ -226,7 +226,6 @@ def generate_invitation_html(data, output_path="index.html"):
             <div class="box-style">{{account_items_html}}</div>
             
             <div style="margin-top: 20px;">
-                <a href="https://m.99flower.co.kr/" target="_blank" class="flower-btn">🌸 축하 화환 보내기</a>
                 <button class="share-btn" onclick="shareInvitation()">🔗 모바일 청첩장 링크 공유하기</button>
             </div>
         </div>

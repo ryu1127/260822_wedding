@@ -57,28 +57,31 @@
         .swiper-slide-lightbox img { max-width: 100%; max-height: 90vh; object-fit: contain; }
         #lightbox .close { position: absolute; top: 30px; right: 20px; color: #fff; font-size: 40px; cursor: pointer; z-index: 2100; padding: 10px; line-height: 1; }
 
-        .box-style { background: #f9f9f9; padding: 20px; border-radius: 8px; margin-top: 20px; text-align: left; border: 1px solid #eee; }
-        .account-item { margin-bottom: 15px; border-bottom: 1px solid #eee; padding-bottom: 10px; }
-        .account-item:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
-        .account-info { display: flex; justify-content: space-between; align-items: center; margin-top: 5px; }
-        
-        .btn-group { display: flex; gap: 5px; }
-        .small-btn { padding: 6px 12px; background: var(--accent-color); color: #fff; border: none; border-radius: 4px; font-size: 12px; cursor: pointer; text-decoration: none; display: inline-block; }
-        .phone-btn { background: #8e9775; display: inline-flex; align-items: center; justify-content: center; width: 24px; height: 24px; border-radius: 50%; padding: 0; } 
-        
-        .share-btn { background: var(--accent-color); color: #fff; font-weight: bold; width: 100%; margin-top: 10px; height: 45px; font-size: 14px; border-radius: 8px; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; }
-        .flower-btn { background: var(--white); color: #333; border: 1px solid #ddd; width: 100%; margin-top: 10px; height: 45px; font-size: 14px; border-radius: 8px; cursor: pointer; text-decoration: none; display: flex; align-items: center; justify-content: center; gap: 8px; }
+        .calendar-wrap { margin-top: 30px; border-top: 1px solid #f9f9f9; padding-top: 30px; }
+        .calendar-header { font-size: 18px; margin-bottom: 20px; color: var(--accent-color); font-weight: bold; }
+        .calendar-table { width: 100%; border-collapse: collapse; }
+        .calendar-table th, .calendar-table td { width: 14.28%; padding: 10px 0; font-size: 14px; }
+        .calendar-table th { color: var(--gray-text); font-weight: normal; font-size: 12px; }
+        .calendar-table th:first-child, .calendar-table td:first-child { color: #e74c3c; } /* Sunday */
+        .calendar-table th:last-child, .calendar-table td:last-child { color: #3498db; } /* Saturday */
+        .calendar-day.active { position: relative; color: #fff !important; z-index: 1; }
+        .calendar-day.active::after { content: ''; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 30px; height: 30px; background: var(--accent-color); border-radius: 50%; z-index: -1; }
 
-        .map-container { width: 100%; height: 350px; margin: 20px 0; border-radius: 8px; overflow: hidden; border: 1px solid #eee; }
-        .map-btn-group { display: flex; gap: 8px; justify-content: center; margin-top: 10px; flex-wrap: wrap; }
-        .map-btn { padding: 10px 12px; background: var(--accent-color); color: #fff; text-decoration: none; border-radius: 20px; font-size: 12px; min-width: 80px; text-align: center; }
-        .kakao-btn { background: #fee500; color: #3c1e1e; }
-        .tmap-btn { background: #1a73e8; color: #fff; }
-        
-        .transport-item { text-align: left; margin-bottom: 25px; padding-left: 10px; border-left: 2px solid var(--accent-color); }
-        .transport-title { font-weight: bold; color: var(--accent-color); font-size: 15px; margin-bottom: 5px; }
-        .transport-desc { font-size: 14px; color: #666; line-height: 1.6; }
-        .footer { padding: 40px; text-align: center; font-size: 12px; color: #aaa; background: #fafafa; }
+        .account-accordion { margin-top: 20px; }
+        .accordion-btn { 
+            width: 100%; padding: 15px; background: #f9f9f9; border: 1px solid #eee; border-radius: 8px; 
+            display: flex; justify-content: space-between; align-items: center; cursor: pointer; 
+            font-size: 15px; font-family: 'Gowun Batang', serif; margin-bottom: 10px;
+        }
+        .accordion-content { display: none; padding: 10px 15px; background: #fff; border: 1px solid #eee; border-top: none; border-radius: 0 0 8px 8px; margin-top: -11px; margin-bottom: 10px; }
+        .accordion-content.active { display: block; }
+        .account-row { display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 1px solid #f5f5f5; }
+        .account-row:last-child { border-bottom: none; }
+        .account-details { text-align: left; }
+        .account-name { font-size: 14px; color: #333; margin-bottom: 3px; }
+        .account-number { font-size: 13px; color: #666; }
+        .small-btn { padding: 6px 12px; background: var(--accent-color); color: #fff; border: none; border-radius: 4px; font-size: 12px; cursor: pointer; text-decoration: none; display: inline-block; }
+        .share-btn { background: var(--accent-color); color: #fff; font-weight: bold; width: 100%; margin-top: 10px; height: 45px; font-size: 14px; border-radius: 8px; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; }
     </style>
 </head>
 <body>
@@ -87,13 +90,30 @@
             <div class="d-day-badge" id="d-day-text">D-Day</div>
             <div class="main-photo"><img src="images/main.jpeg" alt="Cover"></div>
         </div>
-        
+
         <div class="section reveal" style="padding-bottom: 30px; border-bottom: none;">
             <div class="names">류동헌 <span>♥</span> 황혜신</div>
             <div class="date-info">2026. 08. 22 토요일 12:30</div>
             <div style="margin-top: -20px; margin-bottom: 30px; font-size: 15px;">노블발렌티 <span style="font-weight:bold;">대치점</span> B1F 단독홀</div>
-            
-            <div class="family-section" style="margin-bottom: 0;">
+
+            <div class="calendar-wrap">
+                <div class="calendar-header">2026. 08</div>
+                <table class="calendar-table">
+                    <thead>
+                        <tr><th>일</th><th>월</th><th>화</th><th>수</th><th>목</th><th>금</th><th>토</th></tr>
+                    </thead>
+                    <tbody>
+                        <tr><td></td><td></td><td></td><td></td><td></td><td></td><td>1</td></tr>
+                        <tr><td>2</td><td>3</td><td>4</td><td>5</td><td>6</td><td>7</td><td>8</td></tr>
+                        <tr><td>9</td><td>10</td><td>11</td><td>12</td><td>13</td><td>14</td><td>15</td></tr>
+                        <tr><td>16</td><td>17</td><td>18</td><td>19</td><td>20</td><td>21</td><td class="calendar-day active">22</td></tr>
+                        <tr><td>23</td><td>24</td><td>25</td><td>26</td><td>27</td><td>28</td><td>29</td></tr>
+                        <tr><td>30</td><td>31</td><td></td><td></td><td></td><td></td><td></td></tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="family-section" style="margin-bottom: 0; margin-top: 40px;">
                 <div class="family-side">
                     <div class="family-parents">
                         류부열<span class="amp">&</span>김태옥
@@ -137,7 +157,7 @@
             <p style="margin-bottom: 5px;"><strong>노블발렌티 <span style="font-weight:bold;">대치점</span> B1F 단독홀</strong></p>
             <p class="note-subtitle">*삼성점이 아니오니 유의 부탁드립니다.</p>
             <p style="font-size: 14px; color: #444;">서울특별시 강남구 영동대로 325 (S-Tower 지하 1층)</p>
-            
+
             <div class="map-container">
                 <iframe src="https://maps.google.com/maps?q=%EB%85%B8%EB%B8%94%EB%B0%9C%EB%A0%8C%ED%8B%B0%20%EB%8C%80%EC%B9%98%EC%A0%90&t=&z=16&ie=UTF8&iwloc=&output=embed" width="100%" height="100%" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
             </div>
@@ -147,7 +167,7 @@
                 <a href="https://naver.me/G58gjjWp" target="_blank" class="map-btn">네이버 지도</a>
                 <a href="https://kko.to/ztrlpS-JQd" target="_blank" class="map-btn kakao-btn">카카오 맵</a>
             </div>
-            
+
             <div style="margin-top: 40px;">
                 <div class="transport-item"><div class="transport-title">지하철 및 셔틀버스</div><div class="transport-desc">2호선 삼성역 3번 출구 (셔틀버스 수시 운행)<br>3호선 학여울역 1번 출구 (도보 10분)</div></div>
                 <div class="transport-item"><div class="transport-title">버스</div><div class="transport-desc">휘문고교 사거리 정류장 하차<br>간선: 343, 401 / 지선: 4319 / 마을: 강남01, 강남06</div></div>
@@ -157,14 +177,64 @@
 
         <div class="section reveal">
             <h2 style="color: var(--accent-color); font-weight: normal; letter-spacing: 2px;">마음 전하실 곳</h2>
-            <div class="box-style"><div class="account-item"><strong>신랑 류동헌</strong><div class="account-info"><small style="color:#666;">토스뱅크 1000-1013-9845</small><div class="btn-group"><a href="tel:010-2923-7726" class="small-btn phone-btn">📞</a><button class="small-btn" onclick="copyToClipboard('100010139845')">복사</button></div></div></div><div class="account-item"><strong>신부 황혜신</strong><div class="account-info"><small style="color:#666;">토스뱅크 1000-2458-9041</small><div class="btn-group"><a href="tel:010-6334-6843" class="small-btn phone-btn">📞</a><button class="small-btn" onclick="copyToClipboard('100024589041')">복사</button></div></div></div></div>
-            
+
+            <div class="account-accordion">
+                <button class="accordion-btn" onclick="toggleAccordion('groom-accounts')">
+                    <span>신랑측 마음 전하실 곳</span>
+                    <span>▼</span>
+                </button>
+                <div id="groom-accounts" class="accordion-content">
+                    <div class="account-row">
+                        <div class="account-details">
+                            <div class="account-name">신랑 류동헌</div>
+                            <div class="account-number">토스뱅크 1000-1013-9845</div>
+                        </div>
+                        <button class="small-btn" onclick="copyToClipboard('100010139845')">복사</button>
+                    </div>
+                    <div class="account-row">
+                        <div class="account-details">
+                            <div class="account-name">신랑 아버지 (류부열)</div>
+                            <div class="account-number">미정 0000-0000-0000</div>
+                        </div>
+                        <button class="small-btn" onclick="copyToClipboard('22108752054457')">복사</button>
+                    </div>
+                    <div class="account-row">
+                        <div class="account-details">
+                            <div class="account-name">신랑 어머니 (김태옥)</div>
+                            <div class="account-number">미정 0000-0000-0000</div>
+                        </div>
+                        <button class="small-btn" onclick="copyToClipboard('22108756024823')">복사</button>
+                    </div>
+                </div>
+
+                <button class="accordion-btn" onclick="toggleAccordion('bride-accounts')">
+                    <span>신부측 마음 전하실 곳</span>
+                    <span>▼</span>
+                </button>
+                <div id="bride-accounts" class="accordion-content">
+                    <div class="account-row">
+                        <div class="account-details">
+                            <div class="account-name">신부 황혜신</div>
+                            <div class="account-number">토스뱅크 1000-2458-9041</div>
+                        </div>
+                        <button class="small-btn" onclick="copyToClipboard('100024589041')">복사</button>
+                    </div>
+                    <div class="account-row">
+                        <div class="account-details">
+                            <div class="account-name">신부 부모님 (황애민)</div>
+                            <div class="account-number">우리은행 4210-801-2410</div>
+                        </div>
+                        <button class="small-btn" onclick="copyToClipboard('42108012410')">복사</button>
+                    </div>
+                </div>
+            </div>
+
             <div style="margin-top: 20px;">
                 <button class="share-btn" onclick="shareInvitation()">🔗 모바일 청첩장 링크 공유하기</button>
             </div>
         </div>
 
-        <div class="footer">© 2026 류동헌 & 황혜신</div>
+        <div class="footer">© 류동헌 & 황혜신</div>
     </div>
 
     <div id="lightbox">
@@ -198,7 +268,7 @@
         const photoData = [{"full": "images/gallery/7M400089.jpg", "thumb": "thumbnails/7M400089.jpg"}, {"full": "images/gallery/7M400180.jpg", "thumb": "thumbnails/7M400180.jpg"}, {"full": "images/gallery/7M400201.jpg", "thumb": "thumbnails/7M400201.jpg"}, {"full": "images/gallery/7M400215.jpg", "thumb": "thumbnails/7M400215.jpg"}, {"full": "images/gallery/7M400252.jpg", "thumb": "thumbnails/7M400252.jpg"}, {"full": "images/gallery/7M400269.jpg", "thumb": "thumbnails/7M400269.jpg"}, {"full": "images/gallery/7M400291.jpg", "thumb": "thumbnails/7M400291.jpg"}, {"full": "images/gallery/7M400344.jpg", "thumb": "thumbnails/7M400344.jpg"}, {"full": "images/gallery/7M400461.jpg", "thumb": "thumbnails/7M400461.jpg"}, {"full": "images/gallery/7M400507.jpg", "thumb": "thumbnails/7M400507.jpg"}, {"full": "images/gallery/7R300099.jpg", "thumb": "thumbnails/7R300099.jpg"}, {"full": "images/gallery/7R300288.jpg", "thumb": "thumbnails/7R300288.jpg"}, {"full": "images/gallery/7R300296.jpg", "thumb": "thumbnails/7R300296.jpg"}, {"full": "images/gallery/7R300323.jpg", "thumb": "thumbnails/7R300323.jpg"}, {"full": "images/gallery/7R300346.jpg", "thumb": "thumbnails/7R300346.jpg"}, {"full": "images/gallery/7R300449.jpg", "thumb": "thumbnails/7R300449.jpg"}, {"full": "images/gallery/7R300476.jpg", "thumb": "thumbnails/7R300476.jpg"}, {"full": "images/gallery/7R300496.jpg", "thumb": "thumbnails/7R300496.jpg"}, {"full": "images/gallery/7R300505.jpg", "thumb": "thumbnails/7R300505.jpg"}, {"full": "images/gallery/7R300539.jpg", "thumb": "thumbnails/7R300539.jpg"}, {"full": "images/gallery/7R300577_re2.jpg", "thumb": "thumbnails/7R300577_re2.jpg"}, {"full": "images/gallery/7R300617_re2.jpg", "thumb": "thumbnails/7R300617_re2.jpg"}, {"full": "images/gallery/7R300629.jpg", "thumb": "thumbnails/7R300629.jpg"}, {"full": "images/gallery/7R300745.jpg", "thumb": "thumbnails/7R300745.jpg"}, {"full": "images/gallery/7R300773.jpg", "thumb": "thumbnails/7R300773.jpg"}, {"full": "images/gallery/7R300888_re2.jpg", "thumb": "thumbnails/7R300888_re2.jpg"}, {"full": "images/gallery/7R300962_re2.jpg", "thumb": "thumbnails/7R300962_re2.jpg"}, {"full": "images/gallery/7R301208_re2.jpg", "thumb": "thumbnails/7R301208_re2.jpg"}, {"full": "images/gallery/7R301384_re2.jpg", "thumb": "thumbnails/7R301384_re2.jpg"}, {"full": "images/gallery/7R301397_re2.jpg", "thumb": "thumbnails/7R301397_re2.jpg"}];
         const galleryWrapper = document.getElementById('gallery-wrapper');
         const lightboxWrapper = document.getElementById('lightbox-wrapper');
-        
+
         for (let i = 0; i < photoData.length; i += 4) {
             const slide = document.createElement('div');
             slide.className = 'swiper-slide swiper-slide-gallery';
@@ -227,6 +297,20 @@
         function openLightbox(idx) { document.getElementById('lightbox').style.display = 'flex'; lightboxSwiper.update(); setTimeout(() => { lightboxSwiper.slideToLoop(idx, 0); }, 50); document.body.style.overflow = 'hidden'; }
         function closeLightbox() { document.getElementById('lightbox').style.display = 'none'; document.body.style.overflow = 'auto'; }
         function copyToClipboard(text) { navigator.clipboard.writeText(text).then(() => alert('계좌번호가 복사되었습니다.')); }
+
+        function toggleAccordion(id) {
+            const content = document.getElementById(id);
+            const btn = content.previousElementSibling;
+            const isVisible = content.classList.contains('active');
+
+            if (isVisible) {
+                content.classList.remove('active');
+                btn.querySelector('span:last-child').innerText = '▼';
+            } else {
+                content.classList.add('active');
+                btn.querySelector('span:last-child').innerText = '▲';
+            }
+        }
 
         function shareInvitation() {
             if (navigator.share) {

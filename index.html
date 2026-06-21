@@ -297,15 +297,18 @@
         photoData.forEach(photo => {
             const slide = document.createElement('div');
             slide.className = 'swiper-slide swiper-slide-lightbox';
+            const zoomContainer = document.createElement('div');
+            zoomContainer.className = 'swiper-zoom-container';
             const img = document.createElement('img');
             img.src = photo.full;
             img.loading = 'lazy';
-            slide.appendChild(img);
+            zoomContainer.appendChild(img);
+            slide.appendChild(zoomContainer);
             lightboxWrapper.appendChild(slide);
         });
 
         const gallerySwiper = new Swiper('.swiper-gallery', { slidesPerView: 1, spaceBetween: 10, navigation: { nextEl: '.swiper-button-next', prevEl: '.swiper-button-prev' } });
-        const lightboxSwiper = new Swiper('.swiper-lightbox', { slidesPerView: 1, spaceBetween: 0, loop: true, observer: true, observeParents: true, navigation: { nextEl: '.swiper-button-next', prevEl: '.swiper-button-prev' }, preventClicks: false, preventClicksPropagation: false, touchStartPreventDefault: false });
+        const lightboxSwiper = new Swiper('.swiper-lightbox', { slidesPerView: 1, spaceBetween: 0, loop: true, observer: true, observeParents: true, zoom: true, navigation: { nextEl: '.swiper-button-next', prevEl: '.swiper-button-prev' }, preventClicks: false, preventClicksPropagation: false, touchStartPreventDefault: false });
 
         function openLightbox(idx) { document.getElementById('lightbox').style.display = 'flex'; lightboxSwiper.update(); setTimeout(() => { lightboxSwiper.slideToLoop(idx, 0); }, 50); document.body.style.overflow = 'hidden'; }
         function closeLightbox() { document.getElementById('lightbox').style.display = 'none'; document.body.style.overflow = 'auto'; }

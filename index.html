@@ -47,9 +47,9 @@
         .family-relation { font-size: 13px; color: #888; margin-bottom: 5px; }
         .family-child { font-size: 18px; font-weight: bold; color: var(--accent-color); }
 
-        .swiper-gallery { width: 100%; height: 480px; margin: 20px 0; }
-        .swiper-slide-gallery { display: grid; grid-template-columns: repeat(2, 1fr); grid-template-rows: repeat(2, 1fr); gap: 10px; padding: 10px; box-sizing: border-box; }
-        .swiper-slide-gallery img { width: 100%; height: 100%; object-fit: cover; border-radius: 4px; cursor: pointer; aspect-ratio: 1/1; }
+        .photo-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; margin: 20px 0; }
+        .photo-grid img { width: 100%; aspect-ratio: 1/1; object-fit: cover; border-radius: 4px; cursor: pointer; display: block; }
+        .load-more-btn { display: block; width: 100%; margin-top: 4px; padding: 12px; background: #fff; color: var(--accent-color); border: 1px solid var(--accent-color); border-radius: 8px; font-size: 14px; font-family: 'Gowun Batang', serif; cursor: pointer; letter-spacing: 1px; }
         
         #lightbox { display: none; position: fixed; top:0; left:0; width:100%; height:100%; background: rgba(0,0,0,0.95); z-index: 2000; flex-direction: column; justify-content: center; align-items: center; }
         .swiper-lightbox { width: 100%; height: 100%; }
@@ -158,11 +158,8 @@
 
         <div class="section reveal" style="padding: 60px 0;">
             <h2 style="color: var(--accent-color); font-weight: normal; letter-spacing: 2px;">Wedding Gallery</h2>
-            <div class="swiper swiper-gallery">
-                <div class="swiper-wrapper" id="gallery-wrapper"></div>
-                <div class="swiper-button-next" style="color: var(--accent-color);"></div>
-                <div class="swiper-button-prev" style="color: var(--accent-color);"></div>
-            </div>
+            <div class="photo-grid" id="photo-grid"></div>
+            <button class="load-more-btn" id="load-more-btn" onclick="loadMorePhotos()">더보기</button>
         </div>
 
         <div class="section venue reveal">
@@ -282,20 +279,29 @@
         reveals.forEach(r => observer.observe(r));
 
         const photoData = [{"full": "images/gallery/11.jpg", "thumb": "thumbnails/11.jpg"}, {"full": "images/gallery/12.jpg", "thumb": "thumbnails/12.jpg"}, {"full": "images/gallery/13.jpg", "thumb": "thumbnails/13.jpg"}, {"full": "images/gallery/14.JPG", "thumb": "thumbnails/14.JPG"}, {"full": "images/gallery/15.jpg", "thumb": "thumbnails/15.jpg"}, {"full": "images/gallery/16.jpg", "thumb": "thumbnails/16.jpg"}, {"full": "images/gallery/17.jpg", "thumb": "thumbnails/17.jpg"}, {"full": "images/gallery/21.jpg", "thumb": "thumbnails/21.jpg"}, {"full": "images/gallery/22.JPG", "thumb": "thumbnails/22.JPG"}, {"full": "images/gallery/23.jpg", "thumb": "thumbnails/23.jpg"}, {"full": "images/gallery/24.JPG", "thumb": "thumbnails/24.JPG"}, {"full": "images/gallery/25.JPG", "thumb": "thumbnails/25.JPG"}, {"full": "images/gallery/26.JPG", "thumb": "thumbnails/26.JPG"}, {"full": "images/gallery/27.jpg", "thumb": "thumbnails/27.jpg"}, {"full": "images/gallery/28.jpg", "thumb": "thumbnails/28.jpg"}, {"full": "images/gallery/29.jpg", "thumb": "thumbnails/29.jpg"}, {"full": "images/gallery/30.JPG", "thumb": "thumbnails/30.JPG"}, {"full": "images/gallery/31.jpg", "thumb": "thumbnails/31.jpg"}, {"full": "images/gallery/32.JPG", "thumb": "thumbnails/32.JPG"}, {"full": "images/gallery/33.jpg", "thumb": "thumbnails/33.jpg"}, {"full": "images/gallery/41.jpg", "thumb": "thumbnails/41.jpg"}, {"full": "images/gallery/42.jpg", "thumb": "thumbnails/42.jpg"}, {"full": "images/gallery/43.jpg", "thumb": "thumbnails/43.jpg"}, {"full": "images/gallery/44.jpg", "thumb": "thumbnails/44.jpg"}];
-        const galleryWrapper = document.getElementById('gallery-wrapper');
         const lightboxWrapper = document.getElementById('lightbox-wrapper');
 
-        for (let i = 0; i < photoData.length; i += 4) {
-            const slide = document.createElement('div');
-            slide.className = 'swiper-slide swiper-slide-gallery';
-            photoData.slice(i, i + 4).forEach((photo, idx) => {
+        const photoGrid = document.getElementById('photo-grid');
+        let visibleCount = 4;
+
+        function renderGallery() {
+            photoGrid.innerHTML = '';
+            photoData.slice(0, visibleCount).forEach((photo, idx) => {
                 const img = document.createElement('img');
                 img.src = photo.thumb;
-                img.onclick = () => openLightbox(i + idx);
-                slide.appendChild(img);
+                img.onclick = () => openLightbox(idx);
+                photoGrid.appendChild(img);
             });
-            galleryWrapper.appendChild(slide);
+            const btn = document.getElementById('load-more-btn');
+            btn.style.display = visibleCount >= photoData.length ? 'none' : 'block';
         }
+
+        function loadMorePhotos() {
+            visibleCount = Math.min(visibleCount + 4, photoData.length);
+            renderGallery();
+        }
+
+        renderGallery();
 
         photoData.forEach(photo => {
             const slide = document.createElement('div');
@@ -310,7 +316,6 @@
             lightboxWrapper.appendChild(slide);
         });
 
-        const gallerySwiper = new Swiper('.swiper-gallery', { slidesPerView: 1, spaceBetween: 10, navigation: { nextEl: '.swiper-button-next', prevEl: '.swiper-button-prev' } });
         const lightboxSwiper = new Swiper('.swiper-lightbox', { slidesPerView: 1, spaceBetween: 0, loop: true, observer: true, observeParents: true, zoom: true, navigation: { nextEl: '.swiper-button-next', prevEl: '.swiper-button-prev' }, preventClicks: false, preventClicksPropagation: false, touchStartPreventDefault: false });
 
         function openLightbox(idx) { document.getElementById('lightbox').style.display = 'flex'; lightboxSwiper.update(); setTimeout(() => { lightboxSwiper.slideToLoop(idx, 0); }, 50); document.body.style.overflow = 'hidden'; }
